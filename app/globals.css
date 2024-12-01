@@ -70,3 +70,30 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.animated-title {
+  @apply text-white;
+}
+
+.animated-word {
+  @apply font-black opacity-0;
+  transform: translate3d(10px, 51px, -60px) rotateY(60deg) rotateX(-40deg);
+  transform-origin: 50% 50% -150px !important;
+  will-change: opacity, transform;
+}
+
+.font-zrnic {
+  font-family: var(--font-zrnic);
+}
+
+.font-bebas-neue {
+  font-family: var(--font-bebas-neue);
+}
+
+.font-dmSans {
+  font-family: var(--font-dm-sans);
+}
+
+.font-dmSans-bold {
+  font-family: var(--font-dm-sans-bold);
+}
