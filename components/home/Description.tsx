@@ -4,7 +4,7 @@ import React from "react";
 
 const PandaHRAbout = () => {
   return (
-    <div className="flex flex-col items-center justify-center text-center px-6 py-16">
+    <div className="flex flex-col items-center justify-center text-center px-6 py-16 max-w-[1400px] m-auto">
       {/* Title */}
       <h2 className="text-5xl font-bold font-zrnic text-[#0B0B0B] mb-6">
         What is PandaHR?
