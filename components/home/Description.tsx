@@ -16,7 +16,7 @@ const PandaHRAbout = () => {
         optimize your HR processes. From hiring to employee management and team
         development, PandaHR equips your organization with powerful tools to
         foster collaboration, enhance productivity, and support growth. Whether
-        you're a startup or an established enterprise, PandaHR ensures your
+        you&apos;re a startup or an established enterprise, PandaHR ensures your
         team has the resources and guidance to succeed in today&apos;s dynamic work
         environment.
       </p>
