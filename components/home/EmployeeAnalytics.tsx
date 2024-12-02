@@ -28,7 +28,7 @@ const EmployeeAnalyticsSection = () => {
             <li><strong className="font-dmSans-bold">Real-Time Metrics:</strong> Track employee performance and engagement as it happens.</li>
             <li><strong className="font-dmSans-bold">Productivity Insights:</strong> Get actionable data on how employees are spending their time.</li>
             <li><strong className="font-dmSans-bold">Employee Satisfaction:</strong> Monitor employee well-being and satisfaction through surveys and feedback.</li>
-            <li><strong className="font-dmSans-bold">Custom Reports:</strong> Generate detailed reports tailored to your organization's needs.</li>
+            <li><strong className="font-dmSans-bold">Custom Reports:</strong> Generate detailed reports tailored to your organization&apos;s needs.</li>
           </ul>
           <p className="font-dmSans pb-8">
             With our advanced analytics tools, you can drive better decision-making, foster a positive work culture, and
