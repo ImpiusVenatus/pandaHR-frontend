@@ -32,7 +32,7 @@ const Partners = () => {
 
   return (
     <div
-      className="bg-[#09090B] py-32 mx-auto px-4 md:px-16"
+      className="bg-[#1D1C23] py-32 mx-auto px-4 md:px-16"
       ref={sectionRef}
       style={{
         opacity: inView ? 1 : 0,
@@ -61,14 +61,14 @@ const Partners = () => {
             width={300}
             height={100}
             alt="OpenAI Logo"
-            className="w-[75px] md:w-[150px] object-contain"
+            className="w-[75px] md:w-[200px] object-contain"
           />
           <Image
             src="/logos/anthropic.png"
             width={300}
             height={100}
             alt="Anthropic Logo"
-            className="w-[75px] md:w-[100px] object-contain"
+            className="w-[75px] md:w-[200px] object-contain"
           />
           <Image
             src="/logos/marriott.png"
