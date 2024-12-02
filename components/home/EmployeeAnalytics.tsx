@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const EmployeeAnalyticsSection = () => {
   return (
-    <section className="py-16 px-4">
+    <section id="employee-analytics" className="py-16 px-4">
       <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center">
         {/* Image on the left */}
         <div className="md:w-1/2 flex justify-center px-4">

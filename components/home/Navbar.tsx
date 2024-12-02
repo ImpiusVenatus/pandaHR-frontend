@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const Navbar = () => {
   const [activeTab, setActiveTab] = useState("Home");
@@ -33,14 +34,28 @@ const Navbar = () => {
     <nav
       className={`${
         isScrolled
-          ? "bg-black text-white sticky top-0 z-[100]"
+          ? "bg-black text-white sticky top-0 z-[1000]"
           : "bg-white text-black"
       } w-full transition-all duration-500 ease-in-out font-dmSans-bold shadow-lg`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0">
-            <a className="text-2xl font-bold">Logo</a>
+          {isScrolled ?<Image
+            src="/logos/logo-white.png"
+            alt="Hero Image"
+            width={1000}
+            height={1000}
+            className="w-[200px]"
+          /> :
+          <Image
+            src="/logos/logo-black.png"
+            alt="Hero Image"
+            width={1000}
+            height={1000}
+            className="w-[200px]"
+          />
+          }
           </div>
 
           <div className="hidden md:flex items-center space-x-4">

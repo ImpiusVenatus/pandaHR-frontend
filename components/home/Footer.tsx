@@ -48,22 +48,17 @@ const Footer = () => {
           <h3 className="text-lg font-bold mb-4 font-dmSans-bold">Features</h3>
           <ul className="space-y-2 font-dmSans">
             <li>
-              <a href="#" className="hover:text-white">
+              <a href="#employee-analytics" className="hover:text-white">
                 Employee Analytics
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-white">
-                Time Management
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-white">
+              <a href="#performance-analytics" className="hover:text-white">
                 Performance Tracking
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-white">
+              <a href="#time-attendee" className="hover:text-white">
                 Attendance Monitoring
               </a>
             </li>

@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const TimeAndAttendeeSection = () => {
   return (
-    <section className="py-16 px-4 bg-white">
+    <section id="time-attendee" className="py-16 px-4 bg-white">
       <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center space-y-8 md:space-y-0">
         {/* Content on the left */}
         <div className="md:w-1/2 text-center md:text-left space-y-6">
