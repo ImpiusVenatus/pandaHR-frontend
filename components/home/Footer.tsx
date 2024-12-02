@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram } from "react-icons/fa";
 
 const Footer = () => {
@@ -7,7 +8,13 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Logo & Social Media Links */}
         <div>
-          <h2 className="text-xl font-bold mb-4 font-zrnic">PandaHR</h2>
+          <Image
+            src="/logos/logo-white.png"
+            alt="Hero Image"
+            width={1000}
+            height={1000}
+            className="w-[200px] pb-8"
+          />
           <p className="text-sm mb-6 font-dmSans">
             Simplify HR processes and empower your team with our innovative solutions.
           </p>

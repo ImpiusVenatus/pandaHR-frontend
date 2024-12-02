@@ -17,7 +17,7 @@ const PandaHRAbout = () => {
         development, PandaHR equips your organization with powerful tools to
         foster collaboration, enhance productivity, and support growth. Whether
         you're a startup or an established enterprise, PandaHR ensures your
-        team has the resources and guidance to succeed in today’s dynamic work
+        team has the resources and guidance to succeed in today&apos;s dynamic work
         environment.
       </p>
     </div>
