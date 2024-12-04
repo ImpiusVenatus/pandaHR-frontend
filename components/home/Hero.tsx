@@ -5,14 +5,17 @@ import Image from "next/image";
 import { SparklesIcon } from "@heroicons/react/24/outline";
 import SparklesText from "../ui/sparkles-text";
 import { AnimatedTooltipPreview } from "./AnimatedTooltipPreview";
+import AnimatedShinyText from "../ui/animated-shiny-text";
 
 const HeroSection = () => {
   return (
     <div className="min-h-screen flex items-center px-6 max-w-[1400px] mx-auto">
       <div className="lg:w-1/2 pl-8 lg:pl-32">
         <div className="flex gap-4 text-[#0B0B0B]">
+        <AnimatedShinyText className="flex py-1 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400">
             <SparklesIcon className="h-6 w-6" />
             <h1 className="text-xl font-bold mb-4 font-bebas-neue">Welcome to Your Future</h1>
+        </AnimatedShinyText>
         </div>
         <h2 className="text-[#010101] mb-6 font-zrnic text-6xl font-bold">
           <SparklesText text="HR solution" />
