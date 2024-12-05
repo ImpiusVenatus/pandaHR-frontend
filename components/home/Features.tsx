@@ -4,37 +4,37 @@ import { FaRocket, FaShieldAlt, FaCogs, FaUsers, FaRegLightbulb, FaSmile } from 
 const FeaturesSection = () => {
   const features = [
     {
-      icon: <FaRocket className="text-purple-600 text-5xl" />,
+      icon: <FaRocket className="text-[#7152f3] text-5xl" />,
       title: "High Performance",
       description:
         "Our product is optimized for speed and efficiency, ensuring seamless user experiences even under heavy workloads.",
     },
     {
-      icon: <FaShieldAlt className="text-purple-600 text-5xl" />,
+      icon: <FaShieldAlt className="text-[#7152f3] text-5xl" />,
       title: "Robust Security",
       description:
         "We prioritize security with advanced encryption and protection, keeping your data safe at all times.",
     },
     {
-      icon: <FaCogs className="text-purple-600 text-5xl" />,
+      icon: <FaCogs className="text-[#7152f3] text-5xl" />,
       title: "Customizability",
       description:
         "Easily adapt our product to fit your unique needs with a wide range of customization options.",
     },
     {
-      icon: <FaUsers className="text-purple-600 text-5xl" />,
+      icon: <FaUsers className="text-[#7152f3] text-5xl" />,
       title: "User-Friendly",
       description:
         "Our interface is intuitive and easy to navigate, ensuring a smooth experience for users of all technical levels.",
     },
     {
-      icon: <FaRegLightbulb className="text-purple-600 text-5xl" />,
+      icon: <FaRegLightbulb className="text-[#7152f3] text-5xl" />,
       title: "Innovative Technology",
       description:
         "We leverage cutting-edge technology to offer the most innovative features, making your business processes more efficient.",
     },
     {
-      icon: <FaSmile className="text-purple-600 text-5xl" />,
+      icon: <FaSmile className="text-[#7152f3] text-5xl" />,
       title: "Customer Support",
       description:
         "Our dedicated support team is available 24/7 to assist you with any questions or issues you may have.",
