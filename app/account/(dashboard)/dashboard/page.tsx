@@ -1,6 +1,7 @@
 "use client";
 import { AttendanceTable } from "@/components/dashboard/AttendanceTable";
 import { AttendanceChart } from "@/components/dashboard/BarChart";
+import { Calendar } from "@/components/ui/calendar";
 import React from "react";
 import { FiCalendar, FiChevronDown, FiChevronUp, FiUser } from "react-icons/fi";
 
@@ -113,7 +114,12 @@ const Dashboard = () => {
           <FiCalendar />
         </div>
         <div className="w-full">
-          Calendar Placeholder
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={setDate}
+            className="w-full"
+          />
         </div>
       </div>
     </div>
