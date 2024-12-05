@@ -10,16 +10,23 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-checkbox": "^1.1.2",
+    "@radix-ui/react-dropdown-menu": "^2.1.2",
+    "@radix-ui/react-slot": "^1.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^3.0.0",
     "framer-motion": "^12.0.0-alpha.1",
     "gsap": "^3.12.5",
     "lucide-react": "^0.462.0",
-    "next": "15.0.3",
-    "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc-66855b96-20241106",
+    "next": "14.0.2",
+    "react": "18.3.1",
+    "react-day-picker": "^8.10.1",
+    "react-dom": "18.3.1",
     "react-icons": "^5.3.0",
+    "react-resizable-panels": "^2.1.7",
+    "recharts": "^2.14.1",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7"
   },
@@ -35,8 +42,9 @@
   },
   "overrides": {
     "framer-motion": {
-      "react": "19.0.0-rc-66855b96-20241106",
-      "react-dom": "19.0.0-rc-66855b96-20241106"
-    }
+      "react": "18.3.1",
+      "react-dom": "18.3.1"
+    },
+    "react-is": "18.3.1"
   }
 }

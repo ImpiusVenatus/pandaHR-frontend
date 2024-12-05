@@ -66,7 +66,9 @@ const SignUp: React.FC = () => {
                 type="submit"
                 className="w-full p-2 font-bold text-[#241E3C] border border-white bg-white rounded-md hover:bg-transparent hover:text-white duration-300 transition-all"
               >
-                Sign Up
+                <a href="/account/dashboard">
+                  SignUp
+                </a>
               </button>
             </form>
             <div className="text-center text-gray-400 my-4">or</div>
