@@ -36,7 +36,7 @@ const EmployeeAnalyticsSection = () => {
           </p>
           <a
             href="#"
-            className="bg-purple-700 font-dmSans-bold text-white py-4 px-6 rounded hover:bg-white hover:text-purple-700 hover:bg-transparent border border-purple-700 transition duration-300"
+            className="bg-[#7152f3] font-dmSans-bold text-white py-4 px-6 rounded hover:bg-white hover:text-[#7152f3] hover:bg-transparent border border-[#7152f3] transition duration-300"
           >
             View More
           </a>

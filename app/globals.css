@@ -101,3 +101,38 @@ body {
 .font-dmSans-bold {
   font-family: var(--font-dm-sans-bold);
 }
+
+.font-lexend {
+  font-family: var(--font-lexend);
+}
+
+.clip-circle {
+  clip-path: circle(120% at -25% 10%);
+}
+
+/* Apply base styles to all checkboxes globally */
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  border-radius: 0.375rem; /* rounded-xl */
+  background-color: white;
+  border: 2px solid #241e3c;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  outline: none;
+}
+
+/* When checkbox is checked */
+input[type="checkbox"]:checked {
+  background-color: #241e3c;
+  border-color: #7152f3;
+}
+
+/* Focus state for checkbox */
+input[type="checkbox"]:focus {
+  outline: none;
+}
+
+/* Optional: To apply color to text label when checkbox is checked */
+input[type="checkbox"]:checked + span {
+  color: #7152f3;
+}

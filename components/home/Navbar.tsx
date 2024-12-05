@@ -2,11 +2,13 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import LoginModal from "../authentication/LoginModal";
 
 const Navbar = () => {
   const [activeTab, setActiveTab] = useState("Home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
 
   const handleNavClick = (tab: string) => {
     setActiveTab(tab);
@@ -58,13 +60,13 @@ const Navbar = () => {
           }
           </div>
 
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center">
             <div className="hidden md:flex items-center space-x-6 relative">
               {navItems.map((item) => (
                 <button
                   key={item}
                   className={`${
-                    activeTab === item ? "text-purple-600" : "hover:text-purple-600"
+                    activeTab === item ? "text-[#7152f3]" : "hover:text-[#7152f3]"
                   } relative focus:outline-none`}
                   onClick={() => handleNavClick(item)}
                   aria-current={activeTab === item ? "page" : undefined}
@@ -73,7 +75,7 @@ const Navbar = () => {
                   {activeTab === item && (
                     <motion.div
                       layoutId="underline"
-                      className="absolute bottom-0 left-0 right-0 h-[2px] bg-purple-600"
+                      className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#7152f3]"
                       initial={{ width: 0 }}
                       animate={{ width: "100%" }}
                       transition={{ duration: 0.3 }}
@@ -82,8 +84,22 @@ const Navbar = () => {
                 </button>
               ))}
             </div>
-            <a className="hover:text-purple-600 cursor-pointer">Login</a>
-            <a className="cursor-pointer border border-black hover:bg-black hover:text-white px-3 py-1 rounded transition-colors duration-300">
+            <button
+              onClick={() => setModalOpen(true)}
+              className="px-3"
+            >
+              <a className="hover:text-[#7152f3] cursor-pointer">Login
+              </a>
+            </button>
+            <LoginModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
+            <a 
+              href="/account/register"
+              className={`${
+              isScrolled
+                ? "cursor-pointer border border-white hover:bg-white hover:text-black px-3 py-1 rounded duration-300"
+                : "cursor-pointer border border-black hover:bg-black hover:text-white px-3 py-1 rounded duration-300"
+            }
+            `}>
               Signup
             </a>
           </div>

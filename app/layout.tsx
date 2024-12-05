@@ -36,6 +36,11 @@ const dmSansBold = localFont({
   weight: "100 900",
 });
 
+const lexend = localFont({
+  src: "./fonts/Lexend.ttf",
+  variable: "--font-lexend",
+})
+
 export const metadata: Metadata = {
   title: "PandaHR",
   description: "Your AIO HR Solution",
@@ -49,7 +54,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${zrnic.variable} ${bebasNeue.variable} ${dmSans.variable} ${dmSansBold.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${zrnic.variable} ${bebasNeue.variable} ${dmSans.variable} ${dmSansBold.variable} ${lexend.variable} antialiased`}
       >
         {children}
       </body>
