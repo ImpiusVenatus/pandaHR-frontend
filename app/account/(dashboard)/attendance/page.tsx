@@ -5,7 +5,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { FiPlusCircle, FiSearch } from "react-icons/fi";
 import React, { useState } from "react";
 import { MdTune } from "react-icons/md";
-import { Avatar } from "@/components/ui/avatar";
 
 const generateEmployees = () => {
   return [
