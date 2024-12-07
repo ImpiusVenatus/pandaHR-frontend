@@ -1,12 +1,59 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
+import useSignup from "@/lib/hooks/auth/useSignup";
 
 const SignUp: React.FC = () => {
+  const { signup, loading, error, showVerificationMessage } = useSignup();
+
+  const [formData, setFormData] = useState({
+    fullName: "",
+    companyName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    if (!agreeToTerms) {
+      alert("You must agree to the terms and conditions.");
+      return;
+    }
+
+    await signup({
+      fullName: formData.fullName,
+      companyName: formData.companyName,
+      email: formData.email,
+      password: formData.password,
+    });
+  };
+
   return (
-    <div className="min-h-screen bg-cover bg-center" style={{ backgroundImage: "url('/authentication/image-1.png')" }}>
+    <div
+      className="min-h-screen bg-cover bg-center"
+      style={{ backgroundImage: "url('/authentication/image-1.png')" }}
+    >
       <div className="flex items-center justify-center min-h-screen bg-black bg-opacity-50">
-        <Image 
+        <Image
           src="/logos/logo-white.png"
           alt="Logo"
           width={150}
@@ -16,11 +63,16 @@ const SignUp: React.FC = () => {
         <div className="w-full max-w-5xl px-8 py-12 flex bg-transparent">
           {/* Left Section: Form */}
           <div className="flex-1 px-8 py-12 bg-transparent">
-            <h2 className="text-3xl text-white font-lexend mb-6">Create Your Account</h2>
-            <form className="space-y-4">
+            <h2 className="text-3xl text-white font-lexend mb-6">
+              Create Your Account
+            </h2>
+            <form className="space-y-4" onSubmit={handleSubmit}>
               <div className="mb-4">
                 <input
                   type="text"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleChange}
                   className="w-full text-white bg-transparent p-3 border border-gray-400 rounded-md focus:outline-none focus:border-[#922AB8] focus:ring-1 focus:ring-[#922AB8]"
                   placeholder="Full Name"
                 />
@@ -28,6 +80,9 @@ const SignUp: React.FC = () => {
               <div className="mb-4">
                 <input
                   type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   className="w-full text-white bg-transparent p-3 border border-gray-400 rounded-md focus:outline-none focus:border-[#922AB8] focus:ring-1 focus:ring-[#922AB8]"
                   placeholder="Email Address"
                 />
@@ -35,6 +90,9 @@ const SignUp: React.FC = () => {
               <div className="mb-4">
                 <input
                   type="text"
+                  name="companyName"
+                  value={formData.companyName}
+                  onChange={handleChange}
                   className="w-full text-white bg-transparent p-3 border border-gray-400 rounded-md focus:outline-none focus:border-[#922AB8] focus:ring-1 focus:ring-[#922AB8]"
                   placeholder="Company Name"
                 />
@@ -42,6 +100,9 @@ const SignUp: React.FC = () => {
               <div className="mb-4">
                 <input
                   type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
                   className="w-full text-white bg-transparent p-3 border border-gray-400 rounded-md focus:outline-none focus:border-[#922AB8] focus:ring-1 focus:ring-[#922AB8]"
                   placeholder="Password"
                 />
@@ -49,12 +110,20 @@ const SignUp: React.FC = () => {
               <div className="mb-4">
                 <input
                   type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
                   className="w-full text-white bg-transparent p-3 border border-gray-400 rounded-md focus:outline-none focus:border-[#922AB8] focus:ring-1 focus:ring-[#922AB8]"
                   placeholder="Confirm Password"
                 />
               </div>
               <div className="flex items-center">
-                <Checkbox id="terms" className="data-[state=checked]:bg-[#922AB8] bg-[#fff]" />
+                <Checkbox
+                  id="terms"
+                  checked={agreeToTerms}
+                  onChange={() => setAgreeToTerms((prev) => !prev)}
+                  className="data-[state=checked]:bg-[#922AB8] bg-[#fff]"
+                />
                 <label
                   htmlFor="terms"
                   className="text-sm font-medium ml-2 text-white"
@@ -64,19 +133,29 @@ const SignUp: React.FC = () => {
               </div>
               <button
                 type="submit"
+                disabled={loading}
                 className="w-full p-2 font-bold text-[#241E3C] border border-white bg-white rounded-md hover:bg-transparent hover:text-white duration-300 transition-all"
               >
-                <a href="/account/dashboard">
-                  SignUp
-                </a>
+                {loading ? "Signing up..." : "SignUp"}
               </button>
             </form>
+
+            {showVerificationMessage && (
+              <p className="mt-4 text-center text-sm text-gray-400">
+                Please check your email to verify your account.
+              </p>
+            )}
+
+            {error && (
+              <p className="mt-4 text-center text-sm text-red-500">{error}</p>
+            )}
+
             <div className="text-center text-gray-400 my-4">or</div>
             <button
               type="button"
-              className="flex items-center justify-center gap-2 w-full p-2 text-white bg-[#922AB8] rounded-md border border-[#922AB8] hover:bg-transparent hover:border-white hover:text-white  duration-300 transition-all"
+              className="flex items-center justify-center gap-2 w-full p-2 text-white bg-[#922AB8] rounded-md border border-[#922AB8] hover:bg-transparent hover:border-white hover:text-white duration-300 transition-all"
             >
-              <Image 
+              <Image
                 src="/authentication/google.png"
                 alt="Google Logo"
                 width={25}
@@ -101,7 +180,7 @@ const SignUp: React.FC = () => {
               height={1000}
               layout="contain"
               style={{
-                filter: "hue-rotate(40deg)"
+                filter: "hue-rotate(40deg)",
               }}
               className="w-full h-full rounded-xl"
             />
