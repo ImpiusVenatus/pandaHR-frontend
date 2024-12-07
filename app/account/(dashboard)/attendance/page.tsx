@@ -180,7 +180,7 @@ const Attendance = () => {
             <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#16151C] dark:text-white" />
           </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="flex items-center gap-2 bg-[#7152F3] text-white">
+          <Button variant="outline" className="flex items-center gap-2 bg-[#7152F3] text-white hover:bg-transparent border border-[#7152F3] hover:text-[#7152F3]">
             <FiPlusCircle />
             Add New Employee
           </Button>

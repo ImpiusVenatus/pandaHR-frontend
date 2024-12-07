@@ -1,7 +1,13 @@
 "use client";
-import React from "react";
+import React, {useState} from "react";
 import { FiBriefcase, FiMapPin, FiPlusCircle } from "react-icons/fi";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 const JobCard = ({ title, category, types, location, salary }: JobCardProps) => (
   <div className="border border-[#A2A1A816] rounded-md p-4 bg-[#A2A1A808] shadow-sm mb-4 font-dmSans">
@@ -74,15 +80,79 @@ const Jobs = () => {
       salary: "5000$/Month",
     },
   ];
+  const [location, setLocation] = useState("Enter a Location");
+  const [department, setDepartment] = useState("Select a Department");
 
   return (
     <div className="container mx-auto p-4 border border-[#A2A1A816] rounded-md font-dmSans">
       {/* Top Section */}
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-semibold">Jobs</h1>
-        <Button variant="outline" className="bg-[#7152F3] text-white">
-          <FiPlusCircle />
-          Add New Job
+        <Button variant="outline" className="flex items-center gap-2 bg-[#7152F3] text-white hover:bg-transparent border border-[#7152F3] hover:text-[#7152F3]">
+          <Dialog>
+            <DialogTrigger className="flex items-center gap-1"><FiPlusCircle /> Add New Job</DialogTrigger>
+            <DialogContent className="w-auto font-dmSans">
+              <DialogHeader>
+                <DialogTitle>Add New Job</DialogTitle>
+              </DialogHeader>
+                <hr/>
+                <div className="flex flex-col gap-4 max-w-[250px]">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="flex justify-between text-[#A2A1A8] px-3">{department} <ChevronDown /></Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="min-w-[15rem]">
+                      <DropdownMenuItem onClick={() => setDepartment("English")}>English</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setDepartment("Spanish")}>Spanish</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setDepartment("French")}>French</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setDepartment("German")}>German</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <Input
+                    id="name"
+                    placeholder="Enter Job Title"
+                    className="w-[240px]"
+                  />
+                  <Input
+                    id="name"
+                    placeholder="Enter Amount"
+                    className="w-[240px]"
+                  />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="flex justify-between text-[#A2A1A8] px-3">{location} <ChevronDown /></Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="min-w-[15rem]">
+                      <DropdownMenuItem onClick={() => setLocation("English")}>English</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setLocation("Spanish")}>Spanish</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setLocation("French")}>French</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setLocation("German")}>German</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <div>
+                    <span>Select Type</span>
+                  <RadioGroup defaultValue="comfortable" className="flex gap-4 pt-2 text-[#A2A1A8]">
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="default" id="r1" className="border-[#A2A1A8]"/>
+                      <Label htmlFor="r1">Default</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="comfortable" id="r2" />
+                      <Label htmlFor="r2">Comfortable</Label>
+                    </div>
+                  </RadioGroup>
+                  </div>
+                </div>
+                <div className="flex justify-between gap-2">
+                  <Button variant={"outline"} className="w-full pl-3 text-left font-normal">
+                    <span>Cancel</span>
+                  </Button>
+                  <Button variant={"outline"} className="w-full pl-3 text-left font-normal bg-[#7152F3] text-white">
+                    <span>Add</span>
+                  </Button>
+                </div>
+            </DialogContent>
+          </Dialog>
         </Button>
       </div>
 

@@ -48,7 +48,7 @@ const TopBar = () => {
                 <FiChevronDown className="h-5 w-5 text-gray-600" />
               </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className='bg-[#16151C]'>
+            <DropdownMenuContent className='bg-[#16151C] text-white'>
               <DropdownMenuItem>Profile</DropdownMenuItem>
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Logout</DropdownMenuItem>
