@@ -12,12 +12,14 @@ const SignUp: React.FC = () => {
   const [formData, setFormData] = useState({
     fullName: "",
     companyName: "",
+    role: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
 
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const isManager = formData.role === "HR Manager";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -43,6 +45,7 @@ const SignUp: React.FC = () => {
     await signup({
       fullName: formData.fullName,
       companyName: formData.companyName,
+      role: formData.role,
       email: formData.email,
       password: formData.password,
     });
@@ -90,16 +93,7 @@ const SignUp: React.FC = () => {
                   required
                 />
               </div>
-              <div className="mb-4">
-                <input
-                  type="text"
-                  name="companyName"
-                  value={formData.companyName}
-                  onChange={handleChange}
-                  className="w-full text-white bg-transparent p-3 border border-gray-400 rounded-md focus:outline-none focus:border-[#922AB8] focus:ring-1 focus:ring-[#922AB8]"
-                  placeholder="Company Name"
-                />
-              </div>
+
               <div className="mb-4">
                 <input
                   type="password"
@@ -121,6 +115,45 @@ const SignUp: React.FC = () => {
                   placeholder="Confirm Password"
                   required
                 />
+              </div>
+              <h2 className="text-white">Select your role</h2>
+              <div className="flex space-x-4">
+                {/* Role selection boxes */}
+                <div
+                  onClick={() =>
+                    setFormData({ ...formData, role: "HR Manager" })
+                  }
+                  className={`cursor-pointer p-3 border rounded-md ${
+                    formData.role === "HR Manager"
+                      ? "bg-[#922AB8] text-white"
+                      : "bg-transparent text-white border-gray-400"
+                  }`}
+                >
+                  HR Manager
+                </div>
+                <div
+                  onClick={() => setFormData({ ...formData, role: "Employee" })}
+                  className={`cursor-pointer p-3 border rounded-md ${
+                    formData.role === "Employee"
+                      ? "bg-[#922AB8] text-white"
+                      : "bg-transparent text-white border-gray-400"
+                  }`}
+                >
+                  Employee
+                </div>
+              </div>
+              <div className="mb-4">
+                {isManager && (
+                  <input
+                    type="text"
+                    name="companyName"
+                    value={formData.companyName}
+                    onChange={handleChange}
+                    className="w-full text-white bg-transparent p-3 border border-gray-400 rounded-md focus:outline-none focus:border-[#922AB8] focus:ring-1 focus:ring-[#922AB8]"
+                    placeholder="Company Name"
+                    required={isManager}
+                  />
+                )}
               </div>
               <div className="flex items-center">
                 <Checkbox

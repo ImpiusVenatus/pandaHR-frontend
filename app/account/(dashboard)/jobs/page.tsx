@@ -1,4 +1,5 @@
 "use client";
+
 import React, {useState} from "react";
 import { FiBriefcase, FiMapPin, FiPlusCircle } from "react-icons/fi";
 import { Button } from "@/components/ui/button";

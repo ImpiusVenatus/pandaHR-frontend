@@ -4,6 +4,7 @@ import axios from "axios";
 interface User {
   id: string;
   fullName: string;
+  role: string;
   email: string;
   // Add other user fields here
 }

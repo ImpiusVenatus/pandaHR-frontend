@@ -81,6 +81,23 @@ const useDepartment = () => {
     }
   };
 
+  const addEmployeeToDepartment = async (departmentId, employeeIds) => {
+    try {
+      const response = await axios.patch(
+        `${API_URL}/${departmentId}/add-employees`,
+        { employees: employeeIds }
+      );
+      console.log("Employees added successfully:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error adding employees to department:",
+        error.response?.data || error.message
+      );
+      throw error;
+    }
+  };
+
   return {
     departments,
     department,
@@ -91,6 +108,7 @@ const useDepartment = () => {
     createDepartment,
     updateDepartment,
     deleteDepartment,
+    addEmployeeToDepartment,
   };
 };
 

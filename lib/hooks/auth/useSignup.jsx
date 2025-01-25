@@ -12,7 +12,7 @@ const useSignup = () => {
   const [error, setError] = useState(null);
   const [showVerificationMessage, setShowVerificationMessage] = useState(false);
 
-  const signup = async ({ fullName, companyName, email, password }) => {
+  const signup = async ({ fullName, role, companyName, email, password }) => {
     setLoading(true);
     setError(null);
 
@@ -33,6 +33,7 @@ const useSignup = () => {
 
       const response = await axios.post(`${API_URL}/auth/signup`, {
         fullName,
+        role,
         companyName,
         email,
         password,

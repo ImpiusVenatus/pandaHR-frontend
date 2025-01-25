@@ -19,8 +19,6 @@ const Navbar = () => {
   // Use the hook to fetch user data
   const { userData, loading } = useGetUserData(userId);
 
-  console.log(userData);
-
   const handleNavClick = (tab: string) => {
     setActiveTab(tab);
     setIsMobileMenuOpen(false);

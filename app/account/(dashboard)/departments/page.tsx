@@ -1,10 +1,18 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FiSearch } from "react-icons/fi";
+import { FiPlusCircle, FiSearch } from "react-icons/fi";
 import React, { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import useDepartment from "@/lib/hooks/company/useDepartment";
 
 const generateDepartments = () => {
   return [
@@ -28,8 +36,73 @@ const generateDepartments = () => {
 };
 
 const Departments = () => {
+  const { createDepartment, addEmployeeToDepartment } = useDepartment();
   const allDepartments = generateDepartments();
   const [searchQuery, setSearchQuery] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEmployeeDialogOpen, setIsEmployeeDialogOpen] = useState(false);
+  const [newDepartment, setNewDepartment] = useState({
+    name: "",
+  });
+
+  const [newEmployee, setNewEmployee] = useState({
+    name: "",
+    designation: "",
+  });
+
+  const [searchEmployee, setSearchEmployee] = useState(""); // For searching employee to add
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState<
+    number | null
+  >(null); // Tracks which department is being updated
+
+  // Handle input changes for adding a new department
+  const handleDepartmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewDepartment({ ...newDepartment, [e.target.name]: e.target.value });
+  };
+
+  // Handle input changes for adding a new employee
+
+  const handleEmployeeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewEmployee({ ...newEmployee, [e.target.name]: e.target.value });
+  };
+
+  // Add a new department
+  const handleAddDepartment = async () => {
+    if (!newDepartment.name) {
+      alert("Please enter a department name.");
+      return;
+    }
+
+    try {
+      await createDepartment(newDepartment);
+      alert("Department created successfully!");
+      setNewDepartment({ name: "" });
+      setIsDialogOpen(false);
+    } catch {
+      alert("Error creating department. Please try again.");
+    }
+  };
+
+  // Add employee to a department
+  const handleAddEmployee = async () => {
+    if (!selectedDepartmentId || (!newEmployee.name && !searchEmployee)) {
+      alert("Please select a department and provide employee details.");
+      return;
+    }
+
+    try {
+      const employeeIds = newEmployee.name
+        ? [newEmployee.name]
+        : [searchEmployee]; // Example logic
+      await addEmployeeToDepartment(selectedDepartmentId, employeeIds);
+      alert("Employee added successfully!");
+      setNewEmployee({ name: "", designation: "" });
+      setSearchEmployee("");
+      setIsEmployeeDialogOpen(false);
+    } catch {
+      alert("Error adding employee. Please try again.");
+    }
+  };
 
   const filteredDepartments = allDepartments.filter((department) =>
     department.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -52,6 +125,20 @@ const Departments = () => {
           />
           <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#16151C] dark:text-white" />
         </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            className="flex items-center gap-2 bg-[#7152F3] text-white hover:bg-transparent border border-[#7152F3] hover:text-[#7152F3]"
+            onClick={() => setIsDialogOpen(true)}
+          >
+            <FiPlusCircle />
+            Add New Department
+          </Button>
+          {/* <Button variant="outline" className="bg-transparent">
+                    <MdTune />
+                    Filter
+                  </Button> */}
+        </div>
       </div>
 
       {/* Departments Section */}
@@ -70,38 +157,53 @@ const Departments = () => {
                     {department.people.length} People
                   </p>
                 </div>
-                <Button variant="outline" className="bg-transparent text-[#7152F3] border-[#7152F3]">
-                  View All
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="bg-transparent text-[#7152F3] border-[#7152F3]"
+                    onClick={() => {
+                      setSelectedDepartmentId(index);
+                      setIsEmployeeDialogOpen(true);
+                    }}
+                  >
+                    Add Employee
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="bg-transparent border-neutral-500 "
+                  >
+                    View All
+                  </Button>
+                </div>
               </div>
-              <hr/>
+              <hr />
 
               {/* People List */}
-            <ul className="space-y-2 cursor-pointer">
-              {department.people.map((person, idx) => (
-                <li
-                  key={idx}
-                  className="flex items-center justify-between py-2 px-3 border rounded-md hover:bg-[#7152F316]"
-                >
-                  {/* Left Section: Avatar and Details */}
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-white">
-                      {/* Placeholder for Avatar */}
-                      <Avatar>
-                        <AvatarImage />
-                      </Avatar>
+              <ul className="space-y-2 cursor-pointer">
+                {department.people.map((person, idx) => (
+                  <li
+                    key={idx}
+                    className="flex items-center justify-between py-2 px-3 border rounded-md hover:bg-[#7152F316]"
+                  >
+                    {/* Left Section: Avatar and Details */}
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-white">
+                        {/* Placeholder for Avatar */}
+                        <Avatar>
+                          <AvatarImage />
+                        </Avatar>
+                      </div>
+                      <div>
+                        <p className="font-medium">{person}</p>
+                        <p className="text-sm text-gray-500">Job Designation</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium">{person}</p>
-                      <p className="text-sm text-gray-500">Job Designation</p>
-                    </div>
-                  </div>
-                  {/* Right Section: Chevron Icon */}
-                  <span className="text-[#7152F3]">
-                    <ChevronRight />
-                  </span>
-                </li>
-              ))}
+                    {/* Right Section: Chevron Icon */}
+                    <span className="text-[#7152F3]">
+                      <ChevronRight />
+                    </span>
+                  </li>
+                ))}
               </ul>
             </div>
           ))
@@ -109,6 +211,72 @@ const Departments = () => {
           <p className="text-center text-gray-500">No departments found.</p>
         )}
       </div>
+      {/* Dialog for Adding New Employee */}
+      <Dialog
+        open={isEmployeeDialogOpen}
+        onOpenChange={setIsEmployeeDialogOpen}
+      >
+        <DialogTrigger className="hidden"></DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Employee to this Department</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              name="name"
+              value={newEmployee.name}
+              onChange={handleEmployeeChange}
+              placeholder="Name of the employee"
+            />
+            <div>or</div>
+            <h2>Search an pandaHR user to add as an employee</h2>
+            <Input
+              name="searchEmployee"
+              value={searchEmployee}
+              onChange={(e) => setSearchEmployee(e.target.value)}
+              placeholder="Search employee to add"
+            />
+          </div>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button onClick={() => setIsEmployeeDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              className="bg-[#7152F3] text-white"
+              onClick={handleAddEmployee}
+            >
+              Add
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog for Adding New Department */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogTrigger className="hidden"></DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Department</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              name="name"
+              value={newDepartment.name}
+              onChange={handleDepartmentChange}
+              placeholder="Department Name"
+            />
+          </div>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+            <Button
+              className="bg-[#7152F3] text-white"
+              onClick={handleAddDepartment}
+            >
+              Add
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
