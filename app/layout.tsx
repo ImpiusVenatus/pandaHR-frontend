@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { AuthProvider } from "@/lib/contexts/auth/AuthContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -39,7 +40,7 @@ const dmSansBold = localFont({
 const lexend = localFont({
   src: "./fonts/Lexend.ttf",
   variable: "--font-lexend",
-})
+});
 
 export const metadata: Metadata = {
   title: "PandaHR",
@@ -56,7 +57,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${zrnic.variable} ${bebasNeue.variable} ${dmSans.variable} ${dmSansBold.variable} ${lexend.variable} antialiased`}
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

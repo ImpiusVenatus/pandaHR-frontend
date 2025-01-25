@@ -28,17 +28,24 @@ const useSignup = () => {
       // Send email verification
       const user = userCredential.user;
       await sendEmailVerification(user, {
-        url: `${window.location.origin}/signup/create-account`,
+        url: `${window.location.origin}`,
       });
 
-      // Send request to the backend to create the user in MongoDB
-      await axios.post(`${API_URL}/auth/signup`, {
+      const response = await axios.post(`${API_URL}/auth/signup`, {
         fullName,
         companyName,
         email,
         password,
         firebaseUid,
       });
+
+      // Assuming the backend sends back a `userId` in the response
+      const { userId } = response.data;
+
+      console.log("User created successfully with ID:", userId);
+
+      // Store the `userId` in localStorage
+      localStorage.setItem("userId", userId);
 
       setShowVerificationMessage(true);
       setLoading(false);

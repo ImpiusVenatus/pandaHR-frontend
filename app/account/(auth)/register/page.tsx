@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import useSignup from "@/lib/hooks/auth/useSignup";
+import Link from "next/link";
 
 const SignUp: React.FC = () => {
   const { signup, loading, error, showVerificationMessage } = useSignup();
@@ -75,6 +76,7 @@ const SignUp: React.FC = () => {
                   onChange={handleChange}
                   className="w-full text-white bg-transparent p-3 border border-gray-400 rounded-md focus:outline-none focus:border-[#922AB8] focus:ring-1 focus:ring-[#922AB8]"
                   placeholder="Full Name"
+                  required
                 />
               </div>
               <div className="mb-4">
@@ -85,6 +87,7 @@ const SignUp: React.FC = () => {
                   onChange={handleChange}
                   className="w-full text-white bg-transparent p-3 border border-gray-400 rounded-md focus:outline-none focus:border-[#922AB8] focus:ring-1 focus:ring-[#922AB8]"
                   placeholder="Email Address"
+                  required
                 />
               </div>
               <div className="mb-4">
@@ -105,6 +108,7 @@ const SignUp: React.FC = () => {
                   onChange={handleChange}
                   className="w-full text-white bg-transparent p-3 border border-gray-400 rounded-md focus:outline-none focus:border-[#922AB8] focus:ring-1 focus:ring-[#922AB8]"
                   placeholder="Password"
+                  required
                 />
               </div>
               <div className="mb-4">
@@ -115,20 +119,27 @@ const SignUp: React.FC = () => {
                   onChange={handleChange}
                   className="w-full text-white bg-transparent p-3 border border-gray-400 rounded-md focus:outline-none focus:border-[#922AB8] focus:ring-1 focus:ring-[#922AB8]"
                   placeholder="Confirm Password"
+                  required
                 />
               </div>
               <div className="flex items-center">
                 <Checkbox
                   id="terms"
                   checked={agreeToTerms}
-                  onChange={() => setAgreeToTerms((prev) => !prev)}
+                  onCheckedChange={(checked) =>
+                    setAgreeToTerms(checked === true)
+                  }
                   className="data-[state=checked]:bg-[#922AB8] bg-[#fff]"
                 />
+
                 <label
                   htmlFor="terms"
                   className="text-sm font-medium ml-2 text-white"
                 >
-                  I agree to the Terms and Conditions
+                  I agree to the{" "}
+                  <span className="text-purple-500">
+                    <Link href={`/terms`}>Terms and Conditions</Link>
+                  </span>
                 </label>
               </div>
               <button

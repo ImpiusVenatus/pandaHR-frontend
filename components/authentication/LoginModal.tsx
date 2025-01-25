@@ -1,7 +1,8 @@
 import Image from "next/image";
-import React from "react";
-import { Checkbox } from "../ui/checkbox";
+import React, { useState } from "react";
+// import { Checkbox } from "../ui/checkbox";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLogin } from "@/lib/hooks/auth/useLogin";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -9,6 +10,15 @@ interface LoginModalProps {
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const { login, loading, error } = useLogin();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await login(email, password);
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -24,7 +34,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
-            transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 25 }}
+            transition={{
+              duration: 0.3,
+              type: "spring",
+              stiffness: 300,
+              damping: 25,
+            }}
           >
             {/* Close Button */}
             <button
@@ -39,7 +54,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
             <div className="flex flex-col lg:flex-row">
               {/* Left Section */}
               <div className="flex-1 px-16 pt-16 text-white clip-circle">
-                <h2 className="text-4xl font-zrnic max-w-[70%]">Manage and grow with PandaHR!</h2>
+                <h2 className="text-4xl font-zrnic max-w-[70%]">
+                  Manage and grow with PandaHR!
+                </h2>
                 <div className="mt-8 space-y-6">
                   <div className="flex items-center justify-end max-w-[80%]">
                     <Image
@@ -67,12 +84,15 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                 <h2 className="text-3xl text-[#241E3C] font-lexend">
                   Welcome Back!
                 </h2>
-                <form className="mt-6 space-y-4">
+                <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
                   <div className="mb-4">
                     <input
                       type="email"
                       className="w-full text-[#241E3C] bg-transparent p-3 border border-[#241E3C] rounded-md focus:outline-none focus:ring-1 focus:ring-[#241E3C]"
                       placeholder="Email Address"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
                     />
                   </div>
                   <div className="mb-4">
@@ -80,11 +100,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                       type="password"
                       className="w-full text-[#241E3C] bg-transparent p-3 border border-[#241E3C] rounded-md focus:outline-none focus:ring-1 focus:ring-[#241E3C]"
                       placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
                     />
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="terms" />
+                      <input type="checkbox" id="terms" />
                       <label
                         htmlFor="terms"
                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -99,9 +122,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                   <button
                     type="submit"
                     className="w-full p-2 text-white border border-[#241E3C] bg-[#241E3C] rounded-md hover:bg-white hover:text-[#241E3C] duration-300 transition-all"
+                    disabled={loading}
                   >
-                    Login
+                    {loading ? "Logging in..." : "Login"}
                   </button>
+                  {error && (
+                    <p className="text-red-500 text-sm mt-2">{error}</p>
+                  )}
                 </form>
                 <div className="text-center text-gray-600">or</div>
                 <button

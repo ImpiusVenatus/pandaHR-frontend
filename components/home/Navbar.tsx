@@ -3,12 +3,23 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import LoginModal from "../authentication/LoginModal";
+import { useGetUserData } from "@/lib/hooks/user/useGetUserData";
+import Link from "next/link";
 
 const Navbar = () => {
   const [activeTab, setActiveTab] = useState("Home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
+
+  // Get the userId from localStorage
+  const userId =
+    typeof window !== "undefined" ? localStorage.getItem("userId") : null;
+
+  // Use the hook to fetch user data
+  const { userData, loading } = useGetUserData(userId);
+
+  console.log(userData);
 
   const handleNavClick = (tab: string) => {
     setActiveTab(tab);
@@ -43,21 +54,23 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0">
-          {isScrolled ?<Image
-            src="/logos/logo-white.png"
-            alt="Hero Image"
-            width={1000}
-            height={1000}
-            className="w-[200px]"
-          /> :
-          <Image
-            src="/logos/logo-black.png"
-            alt="Hero Image"
-            width={1000}
-            height={1000}
-            className="w-[200px]"
-          />
-          }
+            {isScrolled ? (
+              <Image
+                src="/logos/logo-white.png"
+                alt="Hero Image"
+                width={1000}
+                height={1000}
+                className="w-[200px]"
+              />
+            ) : (
+              <Image
+                src="/logos/logo-black.png"
+                alt="Hero Image"
+                width={1000}
+                height={1000}
+                className="w-[200px]"
+              />
+            )}
           </div>
 
           <div className="hidden md:flex items-center">
@@ -66,7 +79,9 @@ const Navbar = () => {
                 <button
                   key={item}
                   className={`${
-                    activeTab === item ? "text-[#7152f3]" : "hover:text-[#7152f3]"
+                    activeTab === item
+                      ? "text-[#7152f3]"
+                      : "hover:text-[#7152f3]"
                   } relative focus:outline-none`}
                   onClick={() => handleNavClick(item)}
                   aria-current={activeTab === item ? "page" : undefined}
@@ -84,24 +99,45 @@ const Navbar = () => {
                 </button>
               ))}
             </div>
-            <button
-              onClick={() => setModalOpen(true)}
-              className="px-3"
-            >
-              <a className="hover:text-[#7152f3] cursor-pointer">Login
-              </a>
-            </button>
-            <LoginModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
-            <a 
-              href="/account/register"
-              className={`${
-              isScrolled
-                ? "cursor-pointer border border-white hover:bg-white hover:text-black px-3 py-1 rounded duration-300"
-                : "cursor-pointer border border-black hover:bg-black hover:text-white px-3 py-1 rounded duration-300"
-            }
-            `}>
-              Signup
-            </a>
+            {!loading && userData ? (
+              <div className="flex items-center space-x-4">
+                <Link
+                  href={`/account/dashboard`}
+                  className="text-sm font-medium pl-4"
+                >
+                  {userData.fullName}
+                </Link>
+                <button
+                  onClick={() => {
+                    localStorage.removeItem("userId");
+                    window.location.reload();
+                  }}
+                  className="cursor-pointer border border-white hover:bg-white hover:text-black px-3 py-1 rounded duration-300"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <>
+                <button onClick={() => setModalOpen(true)} className="px-3">
+                  <a className="hover:text-[#7152f3] cursor-pointer">Login</a>
+                </button>
+                <LoginModal
+                  isOpen={isModalOpen}
+                  onClose={() => setModalOpen(false)}
+                />
+                <a
+                  href="/account/register"
+                  className={`${
+                    isScrolled
+                      ? "cursor-pointer border border-white hover:bg-white hover:text-black px-3 py-1 rounded duration-300"
+                      : "cursor-pointer border border-black hover:bg-black hover:text-white px-3 py-1 rounded duration-300"
+                  }`}
+                >
+                  Signup
+                </a>
+              </>
+            )}
           </div>
 
           <div className="md:hidden flex items-center">
@@ -153,10 +189,27 @@ const Navbar = () => {
               {item}
             </button>
           ))}
-          <a className="block hover:text-gray-400">Login</a>
-          <a className="block hover:text-gray-400 border border-gray-400 px-3 py-1 rounded">
-            Signup
-          </a>
+          {!loading && userData ? (
+            <div className="flex flex-col space-y-2">
+              <span className="block">{userData.fullName}</span>
+              <button
+                onClick={() => {
+                  localStorage.removeItem("userId");
+                  window.location.reload();
+                }}
+                className="block hover:text-gray-400 border border-gray-400 px-3 py-1 rounded"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <>
+              <a className="block hover:text-gray-400">Login</a>
+              <a className="block hover:text-gray-400 border border-gray-400 px-3 py-1 rounded">
+                Signup
+              </a>
+            </>
+          )}
         </div>
       )}
     </nav>
