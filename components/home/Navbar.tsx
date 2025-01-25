@@ -103,7 +103,7 @@ const Navbar = () => {
               <div className="flex items-center space-x-4">
                 <Link
                   href={`/account/dashboard`}
-                  className="text-sm font-medium pl-4"
+                  className="font-medium pl-4 hover:text-[#7152f3]"
                 >
                   {userData.fullName}
                 </Link>
@@ -112,7 +112,7 @@ const Navbar = () => {
                     localStorage.removeItem("userId");
                     window.location.reload();
                   }}
-                  className="cursor-pointer border border-white hover:bg-white hover:text-black px-3 py-1 rounded duration-300"
+                  className="cursor-pointer border border-red-600 px-3 py-1 rounded duration-300 hover:bg-red-600 hover:text-white"
                 >
                   Logout
                 </button>
