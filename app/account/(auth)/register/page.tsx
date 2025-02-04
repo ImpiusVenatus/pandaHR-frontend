@@ -57,13 +57,15 @@ const SignUp: React.FC = () => {
       style={{ backgroundImage: "url('/authentication/image-1.png')" }}
     >
       <div className="flex items-center justify-center min-h-screen bg-black bg-opacity-50">
-        <Image
-          src="/logos/logo-white.png"
-          alt="Logo"
-          width={150}
-          height={150}
-          className="absolute top-4 left-8"
-        />
+        <a href="/">
+          <Image
+            src="/logos/logo-white.png"
+            alt="Logo"
+            width={150}
+            height={150}
+            className="absolute top-4 left-8"
+          />
+        </a>
         <div className="w-full max-w-5xl px-8 py-12 flex bg-transparent">
           {/* Left Section: Form */}
           <div className="flex-1 px-8 py-12 bg-transparent">
@@ -175,6 +177,7 @@ const SignUp: React.FC = () => {
                   </span>
                 </label>
               </div>
+
               <button
                 type="submit"
                 disabled={loading}
