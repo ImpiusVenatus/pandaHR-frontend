@@ -9,8 +9,8 @@ import AnimatedShinyText from "../ui/animated-shiny-text";
 
 const HeroSection = () => {
   return (
-    <div className="min-h-screen flex items-center px-6 max-w-[1400px] mx-auto">
-      <div className="lg:w-1/2 pl-8 lg:pl-32">
+    <div className="h-[70vh] sm:min-h-screen flex items-center px-6 max-w-[1400px] mx-auto">
+      <div className="lg:w-1/2 sm:pl-8 lg:pl-32">
         <div className="flex gap-4 text-[#0B0B0B]">
         <AnimatedShinyText className="text-xl font-bold mb-4 font-bebas-neue flex py-1 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400">
             <SparklesIcon className="h-6 w-6" />
@@ -43,7 +43,7 @@ const HeroSection = () => {
         </div>
       </div>
 
-      <div className="flex justify-center lg:w-1/2 mt-8 lg:mt-0 px-8">
+      <div className="hidden sm:flex justify-center lg:w-1/2 mt-8 lg:mt-0 px-8">
         <div className="w-[24rem] h-[24rem] lg:w-[32rem] lg:h-[32rem] relative">
           <Image
             src="/hero/hero-image.jpg"

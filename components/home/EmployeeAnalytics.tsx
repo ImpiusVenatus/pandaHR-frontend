@@ -6,7 +6,7 @@ const EmployeeAnalyticsSection = () => {
     <section id="employee-analytics" className="py-16 px-4">
       <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center">
         {/* Image on the left */}
-        <div className="md:w-1/2 flex justify-center px-4">
+        <div className="md:w-1/2 hidden sm:flex justify-center px-4">
           <Image
             src="/contents/analytics.jpg"
             alt="Employee Analytics"
@@ -17,20 +17,20 @@ const EmployeeAnalyticsSection = () => {
         </div>
 
         {/* Content on the right */}
-        <div className="md:w-1/2 text-center md:text-left space-y-6">
-          <h2 className="text-5xl leading-[5rem] font-semibold text-black font-zrnic">Employee Analytics</h2>
-          <p className="font-dmSans">
+        <div className="md:w-1/2 text-left space-y-6">
+          <h2 className="text-4xl sm:text-5xl leading-[5rem] font-semibold text-black font-zrnic text-center">Employee Analytics</h2>
+          <p className="font-dmSans text-left sm:text-center">
             Our product offers comprehensive employee analytics, providing insights into workforce productivity,
             engagement, and performance. With real-time data, managers can make informed decisions to improve
             employee satisfaction and optimize team performance.
           </p>
-          <ul className="font-dmSans list-disc pl-5 space-y-2">
+          <ul className="font-dmSans list-disc pl-5 space-y-2 text-left sm:text-center">
             <li><strong className="font-dmSans-bold">Real-Time Metrics:</strong> Track employee performance and engagement as it happens.</li>
             <li><strong className="font-dmSans-bold">Productivity Insights:</strong> Get actionable data on how employees are spending their time.</li>
             <li><strong className="font-dmSans-bold">Employee Satisfaction:</strong> Monitor employee well-being and satisfaction through surveys and feedback.</li>
             <li><strong className="font-dmSans-bold">Custom Reports:</strong> Generate detailed reports tailored to your organization&apos;s needs.</li>
           </ul>
-          <p className="font-dmSans pb-8">
+          <p className="font-dmSans pb-8 text-left sm:text-center">
             With our advanced analytics tools, you can drive better decision-making, foster a positive work culture, and
             ensure your team is always aligned with company goals.
           </p>

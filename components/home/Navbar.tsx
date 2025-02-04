@@ -139,10 +139,12 @@ const Navbar = () => {
           </div>
 
           <div className="md:hidden flex items-center">
-            <button
-              className="text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
+          <button
+            className={`${
+              isScrolled ? 'text-gray-300' : 'text-black'
+            } hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white`}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
               <svg
                 className="h-6 w-6"
                 xmlns="http://www.w3.org/2000/svg"

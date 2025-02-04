@@ -6,7 +6,7 @@ const PerformanceSection = () => {
     <section id="performance-analytics" className="py-16 px-4">
       <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center">
         {/* Image on the left */}
-        <div className="md:w-1/2 flex justify-center px-4">
+        <div className="md:w-1/2 hidden sm:flex justify-center px-4">
           <Image
             src="/contents/performance.jpg"
             alt="Employee Analytics"
@@ -17,8 +17,8 @@ const PerformanceSection = () => {
         </div>
 
         {/* Content on the right */}
-        <div className="md:w-1/2 text-center md:text-left space-y-6">
-          <h2 className="text-5xl font-semibold font-zrnic">
+        <div className="md:w-1/2 md:text-left space-y-6">
+          <h2 className="text-4xl sm:text-5xl font-semibold font-zrnic text-center">
             Performance Analytics
           </h2>
           <p className="font-dmSans">

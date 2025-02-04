@@ -42,16 +42,16 @@ const FeaturesSection = () => {
   ];
 
   return (
-    <section className="py-16 px-4">
+    <section className="py-4 sm:py-16 px-4">
       <div className="max-w-[1400px] mx-auto">
-        <h2 className="text-5xl font-bold text-center mb-8 font-zrnic">Features</h2>
+        <h2 className="text-4xl sm:text-5xl font-bold text-center mb-8 font-zrnic">Features</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <div
               key={index}
-              className="flex flex-col bg-white p-6 rounded-lg shadow-lg"
+              className="flex flex-col bg-white py-2 sm:p-6 rounded-lg text-center sm:text-left shadow-lg"
             >
-              {feature.icon}
+              <div className="mx-auto sm:mx-0">{feature.icon}</div>
               <h3 className="text-xl font-semibold mt-4 font-dmSans-bold">{feature.title}</h3>
               <p className="text-gray-600 mt-2 font-dmSans">{feature.description}</p>
             </div>

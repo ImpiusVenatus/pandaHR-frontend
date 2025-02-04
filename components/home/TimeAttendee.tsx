@@ -6,8 +6,8 @@ const TimeAndAttendeeSection = () => {
     <section id="time-attendee" className="py-16 px-4 bg-white">
       <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center space-y-8 md:space-y-0">
         {/* Content on the left */}
-        <div className="md:w-1/2 text-center md:text-left space-y-6">
-          <h2 className="text-5xl font-semibold text-black font-zrnic">
+        <div className="md:w-1/2 text-left space-y-6">
+          <h2 className="text-4xl sm:text-5xl font-semibold text-black font-zrnic text-center">
             Time and Attendance Management
           </h2>
           <p className="font-dmSans">
@@ -41,7 +41,7 @@ const TimeAndAttendeeSection = () => {
         </div>
 
         {/* Image on the right */}
-        <div className="md:w-1/2 flex justify-center px-4">
+        <div className="md:w-1/2 hidden sm:flex justify-center px-4">
           <Image
             src="/contents/time-leave.jpg"
             alt="Time and Attendance"
