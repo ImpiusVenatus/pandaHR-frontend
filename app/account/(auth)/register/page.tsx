@@ -5,9 +5,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import useSignup from "@/lib/hooks/auth/useSignup";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const SignUp: React.FC = () => {
   const { signup, loading, error, showVerificationMessage } = useSignup();
+
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -42,13 +45,22 @@ const SignUp: React.FC = () => {
       return;
     }
 
-    await signup({
-      fullName: formData.fullName,
-      companyName: formData.companyName,
-      role: formData.role,
-      email: formData.email,
-      password: formData.password,
-    });
+    try {
+      const response = await signup({
+        fullName: formData.fullName,
+        companyName: formData.companyName,
+        role: formData.role,
+        email: formData.email,
+        password: formData.password,
+      });
+  
+      if (response) {
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("Signup failed:", error);
+      alert("Signup failed. Please try again.");
+    }
   };
 
   return (

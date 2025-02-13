@@ -24,111 +24,58 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"; // Assuming Dialog components are imported
-import useEmployee from "@/lib/hooks/employee/useEmployee"; // Assuming useEmployee hook is imported
-
-// const generateEmployees = () => {
-//   return [
-//     {
-//       id: "E001",
-//       name: "John Doe",
-//       department: "HR",
-//       designation: "Manager",
-//       type: "Full-Time",
-//       status: "Active",
-//     },
-//     {
-//       id: "E002",
-//       name: "Jane Smith",
-//       department: "Finance",
-//       designation: "Analyst",
-//       type: "Part-Time",
-//       status: "Inactive",
-//     },
-//     {
-//       id: "E003",
-//       name: "Samuel Green",
-//       department: "IT",
-//       designation: "Developer",
-//       type: "Contract",
-//       status: "Active",
-//     },
-//     {
-//       id: "E004",
-//       name: "Anna White",
-//       department: "Marketing",
-//       designation: "Executive",
-//       type: "Full-Time",
-//       status: "Active",
-//     },
-//     {
-//       id: "E005",
-//       name: "Michael Brown",
-//       department: "Finance",
-//       designation: "Accountant",
-//       type: "Part-Time",
-//       status: "Inactive",
-//     },
-//     {
-//       id: "E006",
-//       name: "Sara Lee",
-//       department: "HR",
-//       designation: "Coordinator",
-//       type: "Full-Time",
-//       status: "Active",
-//     },
-//     {
-//       id: "E007",
-//       name: "David Wilson",
-//       department: "IT",
-//       designation: "Admin",
-//       type: "Contract",
-//       status: "Active",
-//     },
-//     {
-//       id: "E008",
-//       name: "Sophia Davis",
-//       department: "Sales",
-//       designation: "Sales Manager",
-//       type: "Full-Time",
-//       status: "Active",
-//     },
-//   ];
-// };
+} from "@/components/ui/dialog";
+import useEmployee from "@/lib/hooks/employee/useEmployee";
+import useCompany from "@/lib/hooks/company/useCompany";
 
 type Employee = {
-  // id: number;
   name: string;
   department: string;
   designation: string;
   type: "Full-Time" | "Part-Time" | "Contract";
   status: "Active" | "Inactive";
+  companyId: string;
 };
 
 const Employees = () => {
-  const { addEmployee, getAllEmployees, employees, pagination, loading } =
+  const { addEmployee, getEmployeesByCompanyId, employees = [], pagination, loading } =
     useEmployee();
-  // const { addEmployee, getAllEmployees, employees } = useEmployee();
-  // const allEmployees = generateEmployees();
-  // const [searchQuery, setSearchQuery] = useState("");
+  const {fetchCompanyIdByUserId} = useCompany();
 
   const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
+  const [companyId, setCompanyId] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const userId = localStorage.getItem("userId");
 
-  // const [filteredEmployees, setFilteredEmployees] = useState(allEmployees);
-  const [isDialogOpen, setIsDialogOpen] = useState(false); // State for dialog visibility
-
-  // Fetch employees when the page or currentPage changes
   useEffect(() => {
-    getAllEmployees(currentPage, itemsPerPage);
-  }, [currentPage]);
+    const fetchCompany = async () => {
+      if(userId) {
+        const id = await fetchCompanyIdByUserId(userId);
+        setCompanyId(id);
+      }
+    };
+    fetchCompany();
+  }, [userId]);
+  
+  useEffect(() => {
+    if (companyId) {
+      getEmployeesByCompanyId(companyId, currentPage, itemsPerPage);
+    }
+  }, [companyId, currentPage]);
+  
+  useEffect(() => {
+    console.log("Employees:", employees);
+  }, [employees]);
+  
 
   const [newEmployee, setNewEmployee] = useState<Omit<Employee, "id">>({
     name: "",
     department: "",
     designation: "",
-    type: "Full-Time", // Default value matching the union type
-    status: "Active", // Default value matching the union type
+    type: "Full-Time",
+    status: "Active",
+    companyId: "",
   });
 
   const handleInputChange = (
@@ -136,7 +83,6 @@ const Employees = () => {
   ) => {
     const { name, value } = e.target;
 
-    // Validate fields with specific union types
     if (
       name === "type" &&
       !["Full-Time", "Part-Time", "Contract"].includes(value)
@@ -150,7 +96,6 @@ const Employees = () => {
       return;
     }
 
-    // Use a type guard to ensure 'name' exists on newEmployee
     if (name in newEmployee) {
       setNewEmployee((prev) => ({
         ...prev,
@@ -163,7 +108,10 @@ const Employees = () => {
 
   const handleAddEmployee = async () => {
     try {
-      await addEmployee(newEmployee);
+      if(companyId){
+        
+      await addEmployee({...newEmployee, companyId: companyId});
+      }
       console.log("Employee added successfully:", newEmployee);
       closeDialog(); // Close dialog on success
     } catch (error) {
@@ -179,28 +127,9 @@ const Employees = () => {
       designation: "",
       type: "Full-Time",
       status: "Active",
+      companyId: "",
     });
   };
-
-  // const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
-  // const paginatedEmployees = filteredEmployees.slice(
-  //   (currentPage - 1) * itemsPerPage,
-  //   currentPage * itemsPerPage
-  // );
-
-  // const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const query = e.target.value.toLowerCase();
-  //   setSearchQuery(query);
-  //   setFilteredEmployees(
-  //     allEmployees.filter(
-  //       (employee) =>
-  //         employee.name.toLowerCase().includes(query) ||
-  //         employee.id.toLowerCase().includes(query) ||
-  //         employee.department.toLowerCase().includes(query)
-  //     )
-  //   );
-  //   setCurrentPage(1);
-  // };
 
   const openDialog = () => setIsDialogOpen(true);
 
@@ -239,10 +168,10 @@ const Employees = () => {
           <TableHeader>
             <TableRow>
               <TableHead className="font-semibold text-left">
-                Employee Name
+                Sl No.
               </TableHead>
               <TableHead className="font-semibold text-left">
-                Employee ID
+                Employee Name
               </TableHead>
               <TableHead className="font-semibold text-left">
                 Department
@@ -256,51 +185,51 @@ const Employees = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center">
-                  Loading employees...
+          {loading ? (
+            <TableRow>
+              <TableCell colSpan={7} className="text-center">
+                Loading employees...
+              </TableCell>
+            </TableRow>
+          ) : Array.isArray(employees) && employees.length > 0 ? (
+            employees.map((employee, index) => (
+              <TableRow key={employee.id}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>{employee.name}</TableCell>
+                <TableCell>{employee.department}</TableCell>
+                <TableCell>{employee.designation}</TableCell>
+                <TableCell>{employee.type}</TableCell>
+                <TableCell>
+                  <span
+                    className={`py-1 px-2 rounded-full text-xs ${
+                      employee.status === "Active"
+                        ? "bg-[#3FC28A16] text-[#3FC28A]"
+                        : "bg-[#F45B6916] text-[#F45B69]"
+                    }`}
+                  >
+                    {employee.status}
+                  </span>
+                </TableCell>
+                <TableCell className="flex gap-2">
+                  <Button variant="ghost" size="sm">
+                    <FiEye />
+                  </Button>
+                  <Button variant="ghost" size="sm">
+                    <FiEdit />
+                  </Button>
+                  <Button variant="ghost" size="sm">
+                    <FiTrash2 />
+                  </Button>
                 </TableCell>
               </TableRow>
-            ) : employees.length > 0 ? (
-              employees.map((employee) => (
-                <TableRow key={employee.id}>
-                  <TableCell>{employee.name}</TableCell>
-                  <TableCell>{employee.id}</TableCell>
-                  <TableCell>{employee.department}</TableCell>
-                  <TableCell>{employee.designation}</TableCell>
-                  <TableCell>{employee.type}</TableCell>
-                  <TableCell>
-                    <span
-                      className={`py-1 px-2 rounded-full text-xs ${
-                        employee.status === "Active"
-                          ? "bg-[#3FC28A16] text-[#3FC28A]"
-                          : "bg-[#F45B6916] text-[#F45B69]"
-                      }`}
-                    >
-                      {employee.status}
-                    </span>
-                  </TableCell>
-                  <TableCell className="flex gap-2">
-                    <Button variant="ghost" size="sm">
-                      <FiEye />
-                    </Button>
-                    <Button variant="ghost" size="sm">
-                      <FiEdit />
-                    </Button>
-                    <Button variant="ghost" size="sm">
-                      <FiTrash2 />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center">
-                  No employees found.
-                </TableCell>
-              </TableRow>
-            )}
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={7} className="text-center">
+                No employees found.
+              </TableCell>
+            </TableRow>
+          )}
           </TableBody>
         </Table>
       </div>

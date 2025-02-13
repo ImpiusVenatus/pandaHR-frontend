@@ -10,6 +10,7 @@ interface Employee {
   designation: string;
   type: "Full-Time" | "Part-Time" | "Contract";
   status: "Active" | "Inactive";
+  companyId: string;
 }
 
 interface Pagination {
@@ -29,21 +30,31 @@ const useEmployee = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Add a new employee
-  const addEmployee = async (employeeData: Omit<Employee, "id">) => {
+  const addEmployee = async (employeeData: Omit<Employee, "id"> & { companyId: string }) => {
     setLoading(true);
+    
+    if (!employeeData.companyId || employeeData.companyId.trim() === "") {
+      setError("Invalid company ID");
+      setLoading(false);
+      return;
+    }
+  
     try {
       const response = await axios.post<Employee>(API_URL, employeeData);
       setEmployees((prev) => [...prev, response.data]);
     } catch (err: unknown) {
       if (err instanceof Error) {
+        console.error("🚨 API Error:", err.message);
         setError("Error adding employee: " + err.message);
       } else {
+        console.error("🚨 Unexpected Error:", err);
         setError("Error adding employee.");
       }
     } finally {
       setLoading(false);
     }
   };
+  
 
   // Get all employees with pagination
   const getAllEmployees = async (page = 1, limit = 5) => {
@@ -68,6 +79,40 @@ const useEmployee = () => {
         setError("Error fetching employees: " + err.message);
       } else {
         setError("Error fetching employees.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+   // Get employees by company ID
+   const getEmployeesByCompanyId = async (companyId: string, page = 1, limit = 5) => {
+    setLoading(true);
+    try {
+      const response = await axios.get<{
+        success: boolean,
+        data: Employee[];
+        currentPage: number;
+        totalPages: number;
+        totalEmployees: number;
+      }>(`${API_URL}/${companyId}/employees`, {
+        params: { page, limit },
+      });
+
+      console.log("Response", response.data);
+
+      setEmployees(response.data.data);
+      setPagination({
+        currentPage: response.data.currentPage,
+        totalPages: response.data.totalPages,
+        totalEmployees: response.data.totalEmployees,
+      });
+      console.log(employees);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError("Error fetching company employees: " + err.message);
+      } else {
+        setError("Error fetching company employees.");
       }
     } finally {
       setLoading(false);
@@ -137,6 +182,7 @@ const useEmployee = () => {
     error,
     addEmployee,
     getAllEmployees,
+    getEmployeesByCompanyId,
     getEmployeeById,
     updateEmployee,
     removeEmployee,

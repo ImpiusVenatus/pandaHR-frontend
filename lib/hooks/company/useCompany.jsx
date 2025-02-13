@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 
-const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL + "/company";
+const API_URL = process.env.NEXT_PUBLIC_API_URL + "/company";
 
 const useCompany = () => {
   const [companies, setCompanies] = useState([]);
@@ -32,6 +32,41 @@ const useCompany = () => {
       setError(null);
     } catch (err) {
       setError(err.response?.data?.message || "Error fetching company");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch a company ID by user ID
+  const fetchCompanyByUserId = async (userId) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${API_URL}/user/${userId}`);
+      setCompany(response.data.data);
+      setError(null);
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Error fetching company by user ID"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch a company ID by user ID
+  const fetchCompanyIdByUserId = async (userId) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/user/${userId}`
+      );
+      const companyId = response.data.companyId;
+      setCompany(companyId);
+      setError(null);
+      return companyId;
+    } catch (err) {
+      setError(err.response?.data?.message || "Error fetching company ID");
+      return null;
     } finally {
       setLoading(false);
     }
@@ -88,6 +123,8 @@ const useCompany = () => {
     error,
     fetchCompanies,
     fetchCompanyById,
+    fetchCompanyByUserId,
+    fetchCompanyIdByUserId,
     createCompany,
     updateCompany,
     deleteCompany,

@@ -50,10 +50,13 @@ const useSignup = () => {
 
       setShowVerificationMessage(true);
       setLoading(false);
+
+      return { success: true, userId }; // Return success response
     } catch (err) {
       console.error("Signup Error: ", err);
       setError(err.message);
       setLoading(false);
+      return null; // Return null in case of error
     }
   };
 
