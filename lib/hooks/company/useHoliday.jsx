@@ -8,11 +8,11 @@ const useHoliday = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Create a new holiday
-  const createHoliday = async (holidayData) => {
+  // Create a new holiday for a specific company
+  const createHoliday = async (companyId, holidayData) => {
     setLoading(true);
     try {
-      const response = await axios.post(API_URL, holidayData);
+      const response = await axios.post(API_URL, { ...holidayData, companyId });
       setHolidays((prev) => [...prev, response.data.data]);
     } catch (err) {
       setError("Error creating holiday: " + err.message);
@@ -21,11 +21,11 @@ const useHoliday = () => {
     }
   };
 
-  // Get all holidays
-  const getAllHolidays = async () => {
+  // Get all holidays for a specific company
+  const getAllHolidays = async (companyId) => {
     setLoading(true);
     try {
-      const response = await axios.get(API_URL);
+      const response = await axios.get(`${API_URL}?companyId=${companyId}`);
       setHolidays(response.data.data);
     } catch (err) {
       setError("Error fetching holidays: " + err.message);
@@ -34,11 +34,13 @@ const useHoliday = () => {
     }
   };
 
-  // Get a holiday by ID
-  const getHolidayById = async (id) => {
+  // Get a specific holiday by ID for a company
+  const getHolidayById = async (companyId, id) => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API_URL}/${id}`);
+      const response = await axios.get(
+        `${API_URL}/${id}?companyId=${companyId}`
+      );
       return response.data.data;
     } catch (err) {
       setError("Error fetching holiday: " + err.message);
@@ -47,11 +49,14 @@ const useHoliday = () => {
     }
   };
 
-  // Update a holiday by ID
-  const updateHoliday = async (id, holidayData) => {
+  // Update a holiday by ID for a specific company
+  const updateHoliday = async (companyId, id, holidayData) => {
     setLoading(true);
     try {
-      const response = await axios.put(`${API_URL}/${id}`, holidayData);
+      const response = await axios.put(
+        `${API_URL}/${id}?companyId=${companyId}`,
+        holidayData
+      );
       setHolidays((prev) =>
         prev.map((holiday) =>
           holiday._id === id ? response.data.data : holiday
@@ -64,11 +69,11 @@ const useHoliday = () => {
     }
   };
 
-  // Delete a holiday by ID
-  const deleteHoliday = async (id) => {
+  // Delete a holiday by ID for a specific company
+  const deleteHoliday = async (companyId, id) => {
     setLoading(true);
     try {
-      await axios.delete(`${API_URL}/${id}`);
+      await axios.delete(`${API_URL}/${id}?companyId=${companyId}`);
       setHolidays((prev) => prev.filter((holiday) => holiday._id !== id));
     } catch (err) {
       setError("Error deleting holiday: " + err.message);
