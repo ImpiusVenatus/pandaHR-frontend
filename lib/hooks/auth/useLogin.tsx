@@ -35,7 +35,6 @@ export const useLogin = (): UseLoginResult => {
       // Store userId in localStorage
       localStorage.setItem("userId", userId);
 
-      console.log("User logged in successfully:", userId);
     } catch (err) {
       console.error("Login error:", err);
       setError(

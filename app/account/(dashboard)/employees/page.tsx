@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/dialog";
 import useEmployee from "@/lib/hooks/employee/useEmployee";
 import useCompany from "@/lib/hooks/company/useCompany";
+import useDepartment from "@/lib/hooks/company/useDepartment";
 
 type Employee = {
   name: string;
@@ -41,6 +42,7 @@ const Employees = () => {
   const { addEmployee, getEmployeesByCompanyId, employees = [], pagination, loading } =
     useEmployee();
   const {fetchCompanyIdByUserId} = useCompany();
+  const { fetchDepartments } = useDepartment();const [departments, setDepartments] = useState<{ id: number; name: string; people?: string[] }[]>([]);
 
   const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
@@ -57,17 +59,27 @@ const Employees = () => {
     };
     fetchCompany();
   }, [userId]);
+
+  // Fetch departments when companyId is available
+  useEffect(() => {
+    const getDepartments = async () => {
+      if (!companyId) return;
+      try {
+        const fetchedDepartments = await fetchDepartments(companyId);
+        setDepartments(fetchedDepartments || []);
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+      }
+    };
+
+    getDepartments();
+  }, [companyId]);
   
   useEffect(() => {
     if (companyId) {
       getEmployeesByCompanyId(companyId, currentPage, itemsPerPage);
     }
   }, [companyId, currentPage]);
-  
-  useEffect(() => {
-    console.log("Employees:", employees);
-  }, [employees]);
-  
 
   const [newEmployee, setNewEmployee] = useState<Omit<Employee, "id">>({
     name: "",
@@ -96,6 +108,14 @@ const Employees = () => {
       return;
     }
 
+    if (name === "department") {
+      setNewEmployee((prev) => ({
+        ...prev,
+        department: value,
+      }));
+      return;
+    }
+
     if (name in newEmployee) {
       setNewEmployee((prev) => ({
         ...prev,
@@ -112,8 +132,7 @@ const Employees = () => {
         
       await addEmployee({...newEmployee, companyId: companyId});
       }
-      console.log("Employee added successfully:", newEmployee);
-      closeDialog(); // Close dialog on success
+      closeDialog();
     } catch (error) {
       console.error("Failed to add employee:", error);
     }
@@ -276,12 +295,25 @@ const Employees = () => {
               onChange={handleInputChange}
               placeholder="Employee Name"
             />
-            <Input
+            {/* Department Dropdown */}
+            <select
               name="department"
               value={newEmployee.department}
               onChange={handleInputChange}
-              placeholder="Department"
-            />
+              className="border border-neutral-500 rounded-md p-2 text-white bg-black w-full"
+            >
+              {departments.length > 0 ? (
+                departments.map((dept) => (
+                  <option key={dept.id} value={dept.name}>
+                    {dept.name}
+                  </option>
+                ))
+              ) : (
+                <option value="" disabled>
+                  No departments available
+                </option>
+              )}
+            </select>
             <Input
               name="designation"
               value={newEmployee.designation}

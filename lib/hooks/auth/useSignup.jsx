@@ -43,8 +43,6 @@ const useSignup = () => {
       // Assuming the backend sends back a `userId` in the response
       const { userId } = response.data;
 
-      console.log("User created successfully with ID:", userId);
-
       // Store the `userId` in localStorage
       localStorage.setItem("userId", userId);
 

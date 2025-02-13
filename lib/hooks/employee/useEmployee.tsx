@@ -99,7 +99,6 @@ const useEmployee = () => {
         params: { page, limit },
       });
 
-      console.log("Response", response.data);
 
       setEmployees(response.data.data);
       setPagination({
@@ -107,7 +106,6 @@ const useEmployee = () => {
         totalPages: response.data.totalPages,
         totalEmployees: response.data.totalEmployees,
       });
-      console.log(employees);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError("Error fetching company employees: " + err.message);
