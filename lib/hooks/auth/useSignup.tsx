@@ -9,10 +9,24 @@ import { auth } from "../../../config/firebase";
 const useSignup = () => {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [showVerificationMessage, setShowVerificationMessage] = useState(false);
 
-  const signup = async ({ fullName, role, companyName, email, password }) => {
+  interface SignupData {
+    fullName: string;
+    role: string;
+    companyName: string;
+    email: string;
+    password: string;
+  }
+
+  const signup = async ({
+    fullName,
+    role,
+    companyName,
+    email,
+    password,
+  }: SignupData) => {
     setLoading(true);
     setError(null);
 
@@ -52,7 +66,7 @@ const useSignup = () => {
       return { success: true, userId }; // Return success response
     } catch (err) {
       console.error("Signup Error: ", err);
-      setError(err.message);
+      setError((err as Error).message);
       setLoading(false);
       return null; // Return null in case of error
     }

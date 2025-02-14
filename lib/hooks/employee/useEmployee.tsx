@@ -3,8 +3,9 @@ import axios from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL + "/employee";
 
+// In useEmployee.ts
 interface Employee {
-  id: string;
+  _id: string; // Change this to _id to match MongoDB
   name: string;
   department: string;
   designation: string;
@@ -30,15 +31,17 @@ const useEmployee = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Add a new employee
-  const addEmployee = async (employeeData: Omit<Employee, "id"> & { companyId: string }) => {
+  const addEmployee = async (
+    employeeData: Omit<Employee, "id"> & { companyId: string }
+  ) => {
     setLoading(true);
-    
+
     if (!employeeData.companyId || employeeData.companyId.trim() === "") {
       setError("Invalid company ID");
       setLoading(false);
       return;
     }
-  
+
     try {
       const response = await axios.post<Employee>(API_URL, employeeData);
       setEmployees((prev) => [...prev, response.data]);
@@ -54,7 +57,6 @@ const useEmployee = () => {
       setLoading(false);
     }
   };
-  
 
   // Get all employees with pagination
   const getAllEmployees = async (page = 1, limit = 5) => {
@@ -85,12 +87,16 @@ const useEmployee = () => {
     }
   };
 
-   // Get employees by company ID
-   const getEmployeesByCompanyId = async (companyId: string, page = 1, limit = 5) => {
+  // Get employees by company ID
+  const getEmployeesByCompanyId = async (
+    companyId: string,
+    page = 1,
+    limit = 5
+  ) => {
     setLoading(true);
     try {
       const response = await axios.get<{
-        success: boolean,
+        success: boolean;
         data: Employee[];
         currentPage: number;
         totalPages: number;
@@ -98,7 +104,6 @@ const useEmployee = () => {
       }>(`${API_URL}/${companyId}/employees`, {
         params: { page, limit },
       });
-
 
       setEmployees(response.data.data);
       setPagination({
@@ -143,7 +148,7 @@ const useEmployee = () => {
         updatedData
       );
       setEmployees((prev) =>
-        prev.map((employee) => (employee.id === id ? response.data : employee))
+        prev.map((employee) => (employee._id === id ? response.data : employee))
       );
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -161,7 +166,7 @@ const useEmployee = () => {
     setLoading(true);
     try {
       await axios.delete(`${API_URL}/${id}`);
-      setEmployees((prev) => prev.filter((employee) => employee.id !== id));
+      setEmployees((prev) => prev.filter((employee) => employee._id !== id));
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError("Error removing employee: " + err.message);

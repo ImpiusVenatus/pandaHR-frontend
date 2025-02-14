@@ -22,6 +22,14 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "next.config.js", "lib/hooks/company/useAttendance.jsx", "lib/hooks/auth/useSignup.jsx"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "next.config.js",
+    "lib/hooks/company/useAttendance.jsx",
+    "lib/hooks/auth/useSignup.tsx"
+  ],
   "exclude": ["node_modules"]
 }
