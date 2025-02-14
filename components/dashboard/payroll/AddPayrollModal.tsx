@@ -9,17 +9,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import useEmployee from "@/lib/hooks/employee/useEmployee";
+import usePayroll from "@/lib/hooks/company/usePayroll";
 
-// interface Employee {
-//   _id: string;
-//   name: string;
-//   department: string;
-//   designation: string;
-//   type: "Full-Time" | "Part-Time" | "Contract";
-//   status: "Active" | "Inactive";
-//   companyId: string;
-// }
-
+// Payroll interface for form state
 interface Payroll {
   [employeeId: string]: {
     employeeId: string;
@@ -36,10 +28,13 @@ const AddPayrollModal = ({
   onClose: () => void;
 }) => {
   const { employees, getAllEmployees } = useEmployee();
+  const { createPayroll, error } = usePayroll();
+
   const [payroll, setPayroll] = useState<Payroll>({});
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(
     null
   );
+  const [submitting, setSubmitting] = useState<boolean>(false);
 
   useEffect(() => {
     getAllEmployees();
@@ -62,11 +57,32 @@ const AddPayrollModal = ({
     setSelectedEmployeeId(employeeId);
   };
 
-  const handleSubmit = () => {
-    if (selectedEmployeeId) {
-      console.log("Payroll Data for Employee:", payroll[selectedEmployeeId]);
+  const handleSubmit = async () => {
+    if (!selectedEmployeeId) return;
+
+    const payrollData = payroll[selectedEmployeeId];
+
+    if (!payrollData || payrollData.salaryPerMonth <= 0) {
+      alert("Please enter a valid salary.");
+      return;
     }
-    onClose();
+
+    const formattedPayrollData = {
+      employeeId: payrollData.employeeId,
+      monthlySalary: payrollData.salaryPerMonth, // Renamed to match CreatePayrollData
+      CTC: payrollData.ctc, // Renamed to match CreatePayrollData
+    };
+
+    try {
+      setSubmitting(true);
+      console.log("Creating payroll:", formattedPayrollData);
+      await createPayroll(formattedPayrollData);
+      onClose(); // Close modal on success
+    } catch (err) {
+      console.error("Error creating payroll:", err);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -84,8 +100,8 @@ const AddPayrollModal = ({
                   key={employee._id}
                   className={`p-2 cursor-pointer rounded-md ${
                     selectedEmployeeId === employee._id
-                      ? "bg-purple-500 text-white"
-                      : "bg-gray-200"
+                      ? "bg-[#7152F3] text-white border border-[#7152F3]"
+                      : "border border-gray-600"
                   }`}
                   onClick={() => handleSelectEmployee(employee._id)}
                 >
@@ -120,14 +136,18 @@ const AddPayrollModal = ({
               <Button
                 className="w-full bg-[#7152F3] text-white hover:bg-[#5b41d3]"
                 onClick={handleSubmit}
+                disabled={submitting}
               >
-                Add
+                {submitting ? "Adding..." : "Add"}
               </Button>
             </div>
           )}
         </div>
+
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+
         <div className="flex justify-end gap-2 mt-4">
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={onClose} disabled={submitting}>
             Cancel
           </Button>
         </div>

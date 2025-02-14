@@ -3,23 +3,26 @@ import axios, { AxiosError } from "axios";
 
 interface PayrollData {
   _id: string;
-  employeeId: string;
-  salaryPerMonth: number;
-  ctc: number;
-  createdAt: string;
-  updatedAt: string;
-  companyId: string;
+  employeeId: {
+    // Changed from string to object with name property
+    _id: string;
+    name: string;
+  };
+  CTC: number;
+  monthlySalary: number;
+  status: "Paid" | "Pending";
 }
 
 // For creating new payroll entries
 interface CreatePayrollData {
   employeeId: string;
-  salaryPerMonth: number;
-  ctc: number;
-  companyId: string;
+  CTC: number;
+  monthlySalary: number;
+  payDate?: string;
+  status?: "Paid" | "Pending";
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL + "/payroll";
+const API_URL = process.env.NEXT_PUBLIC_API_URL + "/payroll";
 
 const usePayroll = () => {
   const [payrolls, setPayrolls] = useState<PayrollData[]>([]);
@@ -28,6 +31,7 @@ const usePayroll = () => {
 
   // Create a new payroll entry
   const createPayroll = async (payrollData: CreatePayrollData) => {
+    console.log(payrollData);
     setLoading(true);
     try {
       const response = await axios.post<{ data: PayrollData }>(
@@ -60,27 +64,6 @@ const usePayroll = () => {
     } catch (err) {
       const error = err as AxiosError;
       setError(`Error fetching payrolls: ${error.message}`);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Get payroll entries by company ID
-  const getPayrollsByCompanyId = async (companyId: string) => {
-    setLoading(true);
-    try {
-      const response = await axios.get<{
-        data: PayrollData[];
-        currentPage: number;
-        totalPages: number;
-        totalPayrolls: number;
-      }>(`${API_URL}/company/${companyId}`);
-      setPayrolls(response.data.data);
-      return response.data;
-    } catch (err) {
-      const error = err as AxiosError;
-      setError(`Error fetching company payrolls: ${error.message}`);
       throw error;
     } finally {
       setLoading(false);
@@ -151,7 +134,6 @@ const usePayroll = () => {
     error,
     createPayroll,
     getAllPayrolls,
-    getPayrollsByCompanyId,
     getPayrollById,
     updatePayroll,
     deletePayroll,

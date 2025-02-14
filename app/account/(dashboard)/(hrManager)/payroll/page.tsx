@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,55 +13,50 @@ import {
 } from "@/components/ui/table";
 import { FiPlusCircle, FiSearch } from "react-icons/fi";
 import AddPayrollModal from "@/components/dashboard/payroll/AddPayrollModal";
+import usePayroll from "@/lib/hooks/company/usePayroll";
 
-const generatePayrolls = () => [
-  {
-    id: "E001",
-    name: "John Doe",
-    ctc: "$12,00,000",
-    salaryPerMonth: "$1,00,000",
-    status: "Completed",
-  },
-  {
-    id: "E002",
-    name: "Jane Smith",
-    ctc: "$8,40,000",
-    salaryPerMonth: "$70,000",
-    status: "Pending",
-  },
-  {
-    id: "E003",
-    name: "Samuel Green",
-    ctc: "$6,00,000",
-    salaryPerMonth: "$50,000",
-    status: "Completed",
-  },
-];
+// Assuming PayrollData is the correct type for payroll data
+interface PayrollData {
+  _id: string;
+  employeeId: {
+    // Changed from string to object with name property
+    _id: string;
+    name: string;
+  };
+  CTC: number;
+  monthlySalary: number;
+  status: "Paid" | "Pending";
+}
 
 const Payroll = () => {
-  const allPayrolls = generatePayrolls();
+  const { payrolls, loading, error, getAllPayrolls } = usePayroll();
+
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredPayrolls, setFilteredPayrolls] = useState(allPayrolls);
+  const [filteredPayrolls, setFilteredPayrolls] = useState<PayrollData[]>([]); // Explicitly define the type here
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const itemsPerPage = 10;
+
+  useEffect(() => {
+    getAllPayrolls();
+  }, []);
+
+  useEffect(() => {
+    setFilteredPayrolls(
+      payrolls.filter(
+        (payroll) =>
+          payroll.employeeId.name
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) // Use name here
+      )
+    );
+  }, [payrolls, searchQuery]);
 
   const totalPages = Math.ceil(filteredPayrolls.length / itemsPerPage);
   const paginatedPayrolls = filteredPayrolls.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value.toLowerCase();
-    setSearchQuery(query);
-    setFilteredPayrolls(
-      allPayrolls.filter((payroll) =>
-        payroll.name.toLowerCase().includes(query)
-      )
-    );
-    setCurrentPage(1);
-  };
 
   return (
     <div className="container mx-auto p-4 border border-[#A2A1A816] rounded-md font-dmSans">
@@ -69,68 +65,76 @@ const Payroll = () => {
         <div className="relative">
           <Input
             value={searchQuery}
-            onChange={handleSearch}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-32 lg:w-64 border border-[#A2A1A816] rounded-md pl-10 pr-4 py-2"
             placeholder="Search Employee..."
           />
           <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#16151C] dark:text-white" />
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 bg-[#7152F3] text-white hover:bg-transparent border border-[#7152F3] hover:text-[#7152F3]"
-          >
-            <FiPlusCircle />
-            Add Payroll
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          onClick={() => setIsModalOpen(true)}
+          className="flex items-center gap-2 bg-[#7152F3] text-white hover:bg-transparent border border-[#7152F3] hover:text-[#7152F3]"
+        >
+          <FiPlusCircle />
+          Add Payroll
+        </Button>
       </div>
 
       {/* Table Section */}
       <div className="rounded-lg shadow-md overflow-hidden mb-4">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="font-semibold text-left">
-                Employee Name
-              </TableHead>
-              <TableHead className="font-semibold text-left">CTC</TableHead>
-              <TableHead className="font-semibold text-left">
-                Salary Per Month
-              </TableHead>
-              <TableHead className="font-semibold text-left">Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginatedPayrolls.length > 0 ? (
-              paginatedPayrolls.map((payroll) => (
-                <TableRow key={payroll.id}>
-                  <TableCell>{payroll.name}</TableCell>
-                  <TableCell>{payroll.ctc}</TableCell>
-                  <TableCell>{payroll.salaryPerMonth}</TableCell>
-                  <TableCell>
-                    <span
-                      className={`py-1 px-2 rounded-full text-xs ${
-                        payroll.status === "Completed"
-                          ? "bg-[#3FC28A16] text-[#3FC28A]"
-                          : "bg-[#EFBE1216] text-[#EFBE12]"
-                      }`}
-                    >
-                      {payroll.status}
-                    </span>
+        {loading ? (
+          <p className="text-center">Loading payroll data...</p>
+        ) : error ? (
+          <p className="text-center text-red-500">{error}</p>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="font-semibold text-left">
+                  Employee ID
+                </TableHead>
+                <TableHead className="font-semibold text-left">CTC</TableHead>
+                <TableHead className="font-semibold text-left">
+                  Salary Per Month
+                </TableHead>
+                <TableHead className="font-semibold text-left">
+                  Status
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginatedPayrolls.length > 0 ? (
+                paginatedPayrolls.map((payroll) => (
+                  <TableRow key={payroll._id}>
+                    <TableCell>{payroll.employeeId.name}</TableCell>
+                    <TableCell>${payroll.CTC.toLocaleString()}</TableCell>
+                    <TableCell>
+                      ${payroll.monthlySalary.toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        className={`py-1 px-2 rounded-full text-xs ${
+                          payroll.status === "Paid"
+                            ? "bg-[#3FC28A16] text-[#3FC28A]"
+                            : "bg-[#EFBE1216] text-[#EFBE12]"
+                        }`}
+                      >
+                        {payroll.status}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center">
+                    No payroll records found.
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center">
-                  No payroll records found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              )}
+            </TableBody>
+          </Table>
+        )}
       </div>
 
       {/* Pagination Section */}
