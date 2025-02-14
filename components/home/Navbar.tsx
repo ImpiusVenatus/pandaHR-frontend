@@ -100,7 +100,11 @@ const Navbar = () => {
             {!loading && userData ? (
               <div className="flex items-center space-x-4">
                 <Link
-                  href={`/account/dashboard`}
+                  href={
+                    userData.role === "Employee"
+                      ? `/account/employee-dashboard`
+                      : `/account/dashboard`
+                  }
                   className="font-medium pl-4 hover:text-[#7152f3]"
                 >
                   {userData.fullName}
@@ -139,12 +143,12 @@ const Navbar = () => {
           </div>
 
           <div className="md:hidden flex items-center">
-          <button
-            className={`${
-              isScrolled ? 'text-gray-300' : 'text-black'
-            } hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white`}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
+            <button
+              className={`${
+                isScrolled ? "text-gray-300" : "text-black"
+              } hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white`}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
               <svg
                 className="h-6 w-6"
                 xmlns="http://www.w3.org/2000/svg"
