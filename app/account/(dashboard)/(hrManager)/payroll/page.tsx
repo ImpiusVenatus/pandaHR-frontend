@@ -19,7 +19,6 @@ import usePayroll from "@/lib/hooks/company/usePayroll";
 interface PayrollData {
   _id: string;
   employeeId: {
-    // Changed from string to object with name property
     _id: string;
     name: string;
   };
@@ -29,10 +28,11 @@ interface PayrollData {
 }
 
 const Payroll = () => {
-  const { payrolls, loading, error, getAllPayrolls } = usePayroll();
+  const { payrolls, loading, error, getAllPayrolls, updatePayroll } =
+    usePayroll();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredPayrolls, setFilteredPayrolls] = useState<PayrollData[]>([]); // Explicitly define the type here
+  const [filteredPayrolls, setFilteredPayrolls] = useState<PayrollData[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const itemsPerPage = 10;
@@ -43,14 +43,18 @@ const Payroll = () => {
 
   useEffect(() => {
     setFilteredPayrolls(
-      payrolls.filter(
-        (payroll) =>
-          payroll.employeeId.name
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase()) // Use name here
+      payrolls.filter((payroll) =>
+        payroll.employeeId.name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase())
       )
     );
   }, [payrolls, searchQuery]);
+
+  const handleMarkAsPaid = (id: string) => {
+    // Call your update function here to change the status
+    updatePayroll(id, "Paid");
+  };
 
   const totalPages = Math.ceil(filteredPayrolls.length / itemsPerPage);
   const paginatedPayrolls = filteredPayrolls.slice(
@@ -60,7 +64,6 @@ const Payroll = () => {
 
   return (
     <div className="container mx-auto p-4 border border-[#A2A1A816] rounded-md font-dmSans">
-      {/* Top Section */}
       <div className="flex justify-between items-center mb-4">
         <div className="relative">
           <Input
@@ -81,7 +84,6 @@ const Payroll = () => {
         </Button>
       </div>
 
-      {/* Table Section */}
       <div className="rounded-lg shadow-md overflow-hidden mb-4">
         {loading ? (
           <p className="text-center">Loading payroll data...</p>
@@ -100,6 +102,9 @@ const Payroll = () => {
                 </TableHead>
                 <TableHead className="font-semibold text-left">
                   Status
+                </TableHead>
+                <TableHead className="font-semibold text-left">
+                  Actions
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -123,11 +128,26 @@ const Payroll = () => {
                         {payroll.status}
                       </span>
                     </TableCell>
+                    <TableCell>
+                      {payroll.status === "Pending" ? (
+                        <>
+                          <Button
+                            variant="outline"
+                            onClick={() => handleMarkAsPaid(payroll._id)}
+                            className="bg-[#7152F3] text-white hover:bg-transparent border border-[#7152F3] hover:text-[#7152F3]"
+                          >
+                            Mark as Paid
+                          </Button>
+                        </>
+                      ) : (
+                        <span>Already Paid</span>
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center">
+                  <TableCell colSpan={5} className="text-center">
                     No payroll records found.
                   </TableCell>
                 </TableRow>
@@ -137,7 +157,6 @@ const Payroll = () => {
         )}
       </div>
 
-      {/* Pagination Section */}
       <div className="flex justify-between items-center">
         <p className="text-sm text-gray-600">
           Showing{" "}
@@ -168,7 +187,6 @@ const Payroll = () => {
         </div>
       </div>
 
-      {/* Add Payroll Modal */}
       <AddPayrollModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

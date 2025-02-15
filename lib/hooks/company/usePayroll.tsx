@@ -88,15 +88,12 @@ const usePayroll = () => {
   };
 
   // Update a payroll entry by ID
-  const updatePayroll = async (
-    id: string,
-    payrollData: Partial<CreatePayrollData>
-  ) => {
+  const updatePayroll = async (id: string, status: "Paid" | "Pending") => {
     setLoading(true);
     try {
       const response = await axios.patch<{ data: PayrollData }>(
         `${API_URL}/${id}`,
-        payrollData
+        { status } // Only sending the status field
       );
       setPayrolls((prev) =>
         prev.map((payroll) =>

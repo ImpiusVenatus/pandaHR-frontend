@@ -11,7 +11,7 @@ const Jobs = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [companyId, setCompanyId] = useState<string | null>(null);
   const { fetchCompanyIdByUserId } = useCompany();
-  const { jobs, getAllJobs, loading } = useJob();
+  const { jobs, getAllJobs, loading, updateJob } = useJob(); // Assuming updateJob is available
 
   useEffect(() => {
     setUserId(localStorage.getItem("userId"));
@@ -38,6 +38,27 @@ const Jobs = () => {
   const inactiveJobs = jobs.filter((job) => job.status === "Inactive");
   const completedJobs = jobs.filter((job) => job.status === "Completed");
 
+  // Handle status change and update the job
+  // Update handleStatusChange to allow for all status types
+  const handleStatusChange = async (
+    jobId: string,
+    newStatus: "Active" | "Inactive" | "Completed"
+  ) => {
+    try {
+      // Call the updateJob function from the useJob hook to update the job status
+      await updateJob(jobId, newStatus);
+
+      // Only call getAllJobs if companyId is not null
+      if (companyId) {
+        getAllJobs(companyId);
+      } else {
+        console.error("Company ID is null. Cannot fetch jobs.");
+      }
+    } catch (error) {
+      console.error("Error updating job status:", error);
+    }
+  };
+
   return (
     <div className="container mx-auto p-4 border border-[#A2A1A816] rounded-md font-dmSans">
       {/* Top Section */}
@@ -60,7 +81,13 @@ const Jobs = () => {
           <div className="border border-[#A2A1A816] rounded-md p-4 bg-[#F9FAFB] dark:bg-transparent">
             <h2 className="text-lg font-semibold mb-3">Active Jobs</h2>
             {activeJobs.length > 0 ? (
-              activeJobs.map((job) => <JobCard key={job._id} job={job} />)
+              activeJobs.map((job) => (
+                <JobCard
+                  key={job._id}
+                  job={job}
+                  onStatusChange={handleStatusChange}
+                />
+              ))
             ) : (
               <p className="text-gray-500">No active jobs available.</p>
             )}
@@ -70,7 +97,13 @@ const Jobs = () => {
           <div className="border border-[#A2A1A816] rounded-md p-4 bg-[#F9FAFB] dark:bg-transparent">
             <h2 className="text-lg font-semibold mb-3">Inactive Jobs</h2>
             {inactiveJobs.length > 0 ? (
-              inactiveJobs.map((job) => <JobCard key={job._id} job={job} />)
+              inactiveJobs.map((job) => (
+                <JobCard
+                  key={job._id}
+                  job={job}
+                  onStatusChange={handleStatusChange}
+                />
+              ))
             ) : (
               <p className="text-gray-500">No inactive jobs available.</p>
             )}
@@ -80,7 +113,13 @@ const Jobs = () => {
           <div className="border border-[#A2A1A816] rounded-md p-4 bg-[#F9FAFB] dark:bg-transparent">
             <h2 className="text-lg font-semibold mb-3">Completed Jobs</h2>
             {completedJobs.length > 0 ? (
-              completedJobs.map((job) => <JobCard key={job._id} job={job} />)
+              completedJobs.map((job) => (
+                <JobCard
+                  key={job._id}
+                  job={job}
+                  onStatusChange={handleStatusChange}
+                />
+              ))
             ) : (
               <p className="text-gray-500">No completed jobs available.</p>
             )}

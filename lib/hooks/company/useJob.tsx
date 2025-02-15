@@ -100,16 +100,26 @@ const useJob = () => {
     }
   };
 
-  // Update a job listing by ID
-  const updateJob = async (id: string, jobData: Partial<Job>) => {
+  // Update job status by ID
+  const updateJob = async (
+    id: string,
+    status: "Active" | "Inactive" | "Completed"
+  ) => {
     setLoading(true);
     try {
-      const response = await axios.put<ApiResponse<Job>>(
-        `${API_URL}/${id}`,
+      const jobData = { status }; // Only pass the updated status
+
+      // Make a PATCH request to update the job's status
+      const response = await axios.patch<ApiResponse<Job>>(
+        `${API_URL}/${id}`, // Ensure the correct API endpoint is used
         jobData
       );
+
+      // Update the job list with the new status
       setJobs((prev) =>
-        prev.map((job) => (job._id === id ? response.data.data : job))
+        prev.map((job) =>
+          job._id === id ? { ...job, status: response.data.data.status } : job
+        )
       );
     } catch (err) {
       const errorMessage = handleError(
