@@ -1,15 +1,42 @@
 "use client";
-import { AttendanceTable } from "@/components/dashboard/AttendanceTable";
-import { AttendanceChart } from "@/components/dashboard/BarChart";
 import { Calendar } from "@/components/ui/calendar";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FiCalendar, FiChevronDown, FiChevronUp, FiUser } from "react-icons/fi";
+import useDepartment from "@/lib/hooks/company/useDepartment";
+import useCompany from "@/lib/hooks/company/useCompany";
 
 const Dashboard = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [totalEmployees, setTotalEmployees] = useState<number | null>(null);
   const userId = localStorage.getItem("userId");
+  const [companyId, setCompanyId] = useState<string | null>(null);
+  const { fetchCompanyIdByUserId } = useCompany();
+
+  useEffect(() => {
+    const fetchCompany = async () => {
+      if (userId) {
+        const id = await fetchCompanyIdByUserId(userId);
+        setCompanyId(id);
+      }
+    };
+    fetchCompany();
+  }, [userId]);
+  
+  const { fetchDepartments, createDepartment, addEmployeeToDepartment } = useDepartment();
+  const [departments, setDepartments] = useState<{ id: number; name: string; employees: string[]; people?: string[] }[]>([]);
+  useEffect(() => {
+    const getDepartments = async () => {
+      if (!companyId) return;
+      try {
+        const fetchedDepartments = await fetchDepartments(companyId);
+        setDepartments(fetchedDepartments || []);
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+      }
+    };
+    getDepartments();
+  }, [companyId]);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   useEffect(() => {
@@ -75,11 +102,11 @@ const Dashboard = () => {
                   <FiUser className="text-[#7152F3]" />
                 </div>
                 <h2 className="text-lg font-semibold flex items-center gap-2">
-                  Total Applicant
+                  Total Departments
                 </h2>
               </div>
               <div className="flex justify-between items-center mb-2 px-4 py-2">
-                <p className="text-3xl font-bold text-black dark:text-white">1050</p>
+                <p className="text-3xl font-bold text-black dark:text-white">{departments.length}</p>
                 <span className="flex items-center text-[11px] gap-2 py-1 px-2 rounded-md bg-[#30BE8216] text-[#30BE82]">
                   <FiChevronUp /> 5%
                 </span>
@@ -141,26 +168,18 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Row 3 - Graph Section */}
-          <div className="grid grid-cols-1 bg-transparent">
-            <AttendanceChart />
-          </div>
+         
         </div>
 
         {/* Second Column */}
         <div className="bg-transparent p-4 rounded-lg border border-[#A2A1A832]">
           <div className="flex justify-between items-center mb-4">
-            <h4 className="text-lg font-semibold">My Schedule</h4>
             <FiCalendar />
           </div>
           <div className="w-full">
             <Calendar mode="single" selected={date} onSelect={setDate} className="w-full" />
           </div>
         </div>
-      </div>
-
-      <div className="bg-transparent p-4 mt-4 rounded-lg border border-[#A2A1A832]">
-        <AttendanceTable />
       </div>
     </div>
   );

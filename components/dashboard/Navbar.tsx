@@ -73,7 +73,7 @@ const NavBar = () => {
       route: "/account/candidates",
       label: "Candidates",
     },
-    { id: 8, icon: <LeavesIcon />, route: "/account/leaves", label: "Leaves" },
+    { id: 8, icon: <LeavesIcon />, route: "/account/projects", label: "Projects" },
     {
       id: 9,
       icon: <HolidaysIcon />,
