@@ -6,7 +6,17 @@ interface User {
   fullName: string;
   role: string;
   email: string;
-  // Add other user fields here
+  employmentStatus: string;
+  company: string;
+}
+interface Auth {
+  id: string;
+  fullName: string;
+  role: string;
+  email: string;
+  employmentStatus: string;
+  company: string;
+  isVerified: boolean;
 }
 
 export const useGetUserData = (userId: string | null) => {
@@ -16,20 +26,16 @@ export const useGetUserData = (userId: string | null) => {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
     const fetchUserData = async () => {
-      // Get the `userId` from localStorage
-      //   const userId = localStorage.getItem("userId");
-
-      //   if (!userId) {
-      //     setError("User ID is not found in localStorage");
-      //     setLoading(false);
-      //     return;
-      //   }
-
       try {
         setLoading(true);
         const { data } = await axios.get<User>(`${API_URL}/user/${userId}`);
         setUserData(data);
+        console.log(data);
       } catch (err: unknown) {
         console.error("Error fetching user data:", err);
         if (axios.isAxiosError(err)) {
@@ -48,4 +54,41 @@ export const useGetUserData = (userId: string | null) => {
   }, [API_URL, userId]);
 
   return { userData, loading, error };
+};
+export const useGetAuthData = (userId: string | null) => {
+  const [authData, setAuthData] = useState<Auth | null>(null);
+  const [authLoading, setAuthLoading] = useState<boolean>(true);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+  useEffect(() => {
+    if (!userId) {
+      setAuthLoading(false);
+      return;
+    }
+
+    const fetchUserData = async () => {
+      try {
+        setAuthLoading(true);
+        const { data } = await axios.get<Auth>(`${API_URL}/user/auth/${userId}`);
+        setAuthData(data);
+        console.log(data);
+      } catch (err: unknown) {
+        console.error("Error fetching user data:", err);
+        if (axios.isAxiosError(err)) {
+          setAuthError(
+            err.response?.data?.message || err.message || "An error occurred"
+          );
+        } else {
+          setAuthError("Unknown error occurred");
+        }
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [API_URL, userId]);
+
+  return { authData, authLoading, authError };
 };

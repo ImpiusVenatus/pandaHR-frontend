@@ -30,6 +30,7 @@ import useCompany from "@/lib/hooks/company/useCompany";
 import useDepartment from "@/lib/hooks/company/useDepartment";
 
 type Employee = {
+  _id: string;
   name: string;
   department: string;
   designation: string;
@@ -39,7 +40,7 @@ type Employee = {
 };
 
 const Employees = () => {
-  const { addEmployee, getEmployeesByCompanyId, employees = [], pagination, loading } =
+  const { addEmployee, getEmployeesByCompanyId, removeEmployee, employees = [], pagination, loading } =
     useEmployee();
   const {fetchCompanyIdByUserId} = useCompany();
   const { fetchDepartments } = useDepartment();const [departments, setDepartments] = useState<{ id: number; name: string; people?: string[] }[]>([]);
@@ -48,7 +49,21 @@ const Employees = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [companyId, setCompanyId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const userId = localStorage.getItem("userId");
+  const [filters, setFilters] = useState({ department: "", type: "", designation: "" });
+
+  const handleFilterChange = (e: any) => {
+    setFilters({ ...filters, [e.target.name]: e.target.value });
+  };
+
+  const filteredEmployees = employees.filter((emp) => {
+    return (
+      (!filters.department || emp.department === filters.department) &&
+      (!filters.type || emp.type === filters.type) &&
+      (!filters.designation || emp.designation.toLowerCase().includes(filters.designation.toLowerCase()))
+    );
+  });
 
   useEffect(() => {
     const fetchCompany = async () => {
@@ -82,6 +97,7 @@ const Employees = () => {
   }, [companyId, currentPage]);
 
   const [newEmployee, setNewEmployee] = useState<Omit<Employee, "id">>({
+    _id: "",
     name: "",
     department: "",
     designation: "",
@@ -141,6 +157,7 @@ const Employees = () => {
   const closeDialog = () => {
     setIsDialogOpen(false);
     setNewEmployee({
+      _id: "",
       name: "",
       department: "",
       designation: "",
@@ -151,6 +168,14 @@ const Employees = () => {
   };
 
   const openDialog = () => setIsDialogOpen(true);
+
+  const openFilter = () => setIsFilterOpen(true);
+
+  const closeFilter = () => setIsFilterOpen(false);
+
+  const deleteEmployee = (id: string) => {
+    removeEmployee(id);
+  };
 
   return (
     <div className="container mx-auto p-4 border border-[#A2A1A816] rounded-md font-dmSans">
@@ -174,7 +199,7 @@ const Employees = () => {
             <FiPlusCircle />
             Add New Employee
           </Button>
-          <Button variant="outline" className="bg-transparent">
+          <Button variant="outline" className="bg-transparent" onClick={openFilter}>
             <MdTune />
             Filter
           </Button>
@@ -210,9 +235,9 @@ const Employees = () => {
                 Loading employees...
               </TableCell>
             </TableRow>
-          ) : Array.isArray(employees) && employees.length > 0 ? (
-            employees.map((employee, index) => (
-              <TableRow key={employee.id}>
+          ) : Array.isArray(filteredEmployees) && filteredEmployees.length > 0 ? (
+            filteredEmployees.map((employee, index) => (
+              <TableRow key={employee._id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{employee.name}</TableCell>
                 <TableCell>{employee.department}</TableCell>
@@ -230,13 +255,12 @@ const Employees = () => {
                   </span>
                 </TableCell>
                 <TableCell className="flex gap-2">
-                  <Button variant="ghost" size="sm">
-                    <FiEye />
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    <FiEdit />
-                  </Button>
-                  <Button variant="ghost" size="sm">
+                  <Button
+                    onClick={() => deleteEmployee(employee._id)}
+                    variant="ghost"
+                    size="sm"
+                    className="text-[#F45B69]"
+                  >
                     <FiTrash2 />
                   </Button>
                 </TableCell>
@@ -349,6 +373,44 @@ const Employees = () => {
               onClick={handleAddEmployee}
             >
               Add
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+        <DialogTrigger className="hidden"></DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Filter Employee</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+          <Input
+              name="department"
+              value={filters.department}
+              onChange={handleFilterChange}
+              placeholder="Department"
+            />
+          <Input
+              name="designation"
+              value={filters.designation}
+              onChange={handleFilterChange}
+              placeholder="Designation"
+            />
+            <Input
+              name="type"
+              value={filters.type}
+              onChange={handleFilterChange}
+              placeholder="Type"
+            />            
+          </div>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button onClick={closeFilter}>Cancel</Button>
+            <Button
+              className="bg-[#7152F3] hover:text-[#7152F3] text-white"
+              onClick={closeFilter}
+            >
+              Filter
             </Button>
           </div>
         </DialogContent>

@@ -34,8 +34,6 @@ const TopBar = () => {
           </div>
 
           {/* Profile Avatar with Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger>
               <div className="flex items-center gap-2 cursor-pointer">
                 <Avatar className='rounded-md'>
                   <AvatarImage src="/dashboard/sadman.jpeg" alt="Profile" className='!rounded-md'/>
@@ -45,15 +43,7 @@ const TopBar = () => {
                   <h2 className='py-0 my-0'>Sadman</h2>
                   <span className="font-semibold text-[10px] text-gray-400">Sr. Developer</span>
                 </div>
-                <FiChevronDown className="h-5 w-5 text-gray-600" />
               </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className='bg-[#16151C] text-white'>
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Logout</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
       </div>
     </header>

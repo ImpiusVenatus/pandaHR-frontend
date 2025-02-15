@@ -17,25 +17,6 @@ const EmployeeSettings = () => {
     <div className="container mx-auto p-4 border border-[#A2A1A816] rounded-md font-dmSans">
       <h2 className="text-xl font-semibold mb-4">EmployeeSettings</h2>
 
-      {/* Appearance Setting */}
-      <div className="mb-4 border-b border-[#A2A1A816] pb-4 flex justify-between">
-        <div>
-          <h3 className="font-semibold">Appearance</h3>
-          <p className="text-sm text-gray-600">Customize how your theme looks on your device</p>
-        </div>
-        <div className="flex justify-between items-center mt-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="bg-[#7152F3] text-white">{appearance} <ChevronDown /></Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => setAppearance("Light")}>Light</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setAppearance("Dark")}>Dark</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-
       {/* Language Setting */}
       <div className="mb-4 border-b border-[#A2A1A816] pb-4 flex justify-between">
         <div>

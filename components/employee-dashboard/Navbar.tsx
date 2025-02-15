@@ -35,17 +35,11 @@ const NavBar = () => {
     { id: 2, icon: <JobsIcon />, route: "/account/tasks", label: "My Tasks" },
     {
       id: 3,
-      icon: <LeavesIcon />,
-      route: "/account/leave-management",
-      label: "Leave Management",
-    },
-    {
-      id: 4,
       icon: <CandidatesIcon />,
       route: "/account/performance",
       label: "Performance Analytics",
     },
-    { id: 5, icon: <SettingsIcon />, route: "/account/user-settings", label: "Settings" },
+    { id: 4, icon: <SettingsIcon />, route: "/account/user-settings", label: "Settings" },
   ];
 
   return (

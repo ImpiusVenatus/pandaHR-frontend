@@ -111,6 +111,7 @@ const useEmployee = () => {
         totalPages: response.data.totalPages,
         totalEmployees: response.data.totalEmployees,
       });
+      
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError("Error fetching company employees: " + err.message);
@@ -165,7 +166,9 @@ const useEmployee = () => {
   const removeEmployee = async (id: string) => {
     setLoading(true);
     try {
+      console.log(`${API_URL}/${id}`)
       await axios.delete(`${API_URL}/${id}`);
+      
       setEmployees((prev) => prev.filter((employee) => employee._id !== id));
     } catch (err: unknown) {
       if (err instanceof Error) {
