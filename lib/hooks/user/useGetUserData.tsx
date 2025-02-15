@@ -35,7 +35,6 @@ export const useGetUserData = (userId: string | null) => {
         setLoading(true);
         const { data } = await axios.get<User>(`${API_URL}/user/${userId}`);
         setUserData(data);
-        console.log(data);
       } catch (err: unknown) {
         console.error("Error fetching user data:", err);
         if (axios.isAxiosError(err)) {
@@ -70,7 +69,9 @@ export const useGetAuthData = (userId: string | null) => {
     const fetchUserData = async () => {
       try {
         setAuthLoading(true);
-        const { data } = await axios.get<Auth>(`${API_URL}/user/auth/${userId}`);
+        const { data } = await axios.get<Auth>(
+          `${API_URL}/user/auth/${userId}`
+        );
         setAuthData(data);
         console.log(data);
       } catch (err: unknown) {

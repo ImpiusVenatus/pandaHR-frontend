@@ -19,18 +19,87 @@ import { ChevronDown } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import useDepartment from "@/lib/hooks/company/useDepartment";
+import useCompany from "@/lib/hooks/company/useCompany";
+import useJob from "@/lib/hooks/company/useJob";
 
-const JobDialog: React.FC<{ companyId: string }> = ({ companyId }) => {
-  const [location, setLocation] = useState("Enter a Location");
-  const [department, setDepartment] = useState("Select a Department");
-  const { departments, fetchDepartments, loading } = useDepartment();
+const JobDialog: React.FC = () => {
+  const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState("");
+  const [salary, setSalary] = useState("");
+  const [location, setLocation] = useState<"Remote" | "On-site">("Remote");
+  const [place, setPlace] = useState("");
+  const [departmentId, setDepartmentId] = useState("");
+  const [jobType, setJobType] = useState<
+    "Full-Time" | "Part-Time" | "Contract"
+  >("Full-Time");
+
+  const {
+    departments,
+    fetchDepartments,
+    loading: deptLoading,
+  } = useDepartment();
+  const { fetchCompanyIdByUserId } = useCompany();
+  const { createJob, loading, error } = useJob();
+
+  const userId = localStorage.getItem("userId");
+  const [companyId, setCompanyId] = useState("");
 
   useEffect(() => {
-    fetchDepartments(companyId);
+    const fetchCompany = async () => {
+      if (userId) {
+        const id = await fetchCompanyIdByUserId(userId);
+        setCompanyId(id);
+      }
+    };
+    fetchCompany();
+  }, [userId]);
+
+  useEffect(() => {
+    if (companyId) fetchDepartments(companyId);
   }, [companyId]);
 
+  const resetForm = () => {
+    setTitle("");
+    setSalary("");
+    setDepartmentId("");
+    setJobType("Full-Time");
+    setLocation("Remote");
+    setPlace("");
+  };
+
+  const handleSubmit = async () => {
+    if (!title || !salary || !departmentId || !place) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    try {
+      await createJob({
+        companyId,
+        title,
+        departmentId,
+        type: jobType,
+        salary: Number(salary),
+        location,
+        place,
+        postedBy: userId || "",
+      });
+
+      // Reset form and close dialog
+      resetForm();
+      setOpen(false);
+    } catch (error) {
+      console.error("Error creating job:", error);
+    }
+  };
+
+  const handleCancel = () => {
+    resetForm();
+    setOpen(false);
+  };
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger className="flex items-center gap-1">
         <FiPlusCircle /> Add New Job
       </DialogTrigger>
@@ -45,17 +114,22 @@ const JobDialog: React.FC<{ companyId: string }> = ({ companyId }) => {
               <Button
                 variant="outline"
                 className="flex justify-between text-[#A2A1A8] px-3"
-                disabled={loading}
+                disabled={deptLoading}
               >
-                {loading ? "Loading..." : department} <ChevronDown />
+                {deptLoading
+                  ? "Loading..."
+                  : departmentId
+                  ? departments.find((d) => d._id === departmentId)?.name
+                  : "Select a Department"}{" "}
+                <ChevronDown />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="min-w-[15rem]">
               {departments.length > 0 ? (
                 departments.map((dept) => (
                   <DropdownMenuItem
-                    key={dept.id}
-                    onClick={() => setDepartment(dept.name)}
+                    key={dept._id}
+                    onClick={() => setDepartmentId(dept._id)}
                   >
                     {dept.name}
                   </DropdownMenuItem>
@@ -67,8 +141,25 @@ const JobDialog: React.FC<{ companyId: string }> = ({ companyId }) => {
               )}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Input placeholder="Enter Job Title" className="w-[240px]" />
-          <Input placeholder="Enter Amount" className="w-[240px]" />
+          <Input
+            placeholder="Enter Job Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-[240px]"
+          />
+          <Input
+            placeholder="Enter Salary"
+            type="number"
+            value={salary}
+            onChange={(e) => setSalary(e.target.value)}
+            className="w-[240px]"
+          />
+          <Input
+            placeholder="Enter Place"
+            value={place}
+            onChange={(e) => setPlace(e.target.value)}
+            className="w-[240px]"
+          />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -79,47 +170,49 @@ const JobDialog: React.FC<{ companyId: string }> = ({ companyId }) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="min-w-[15rem]">
-              <DropdownMenuItem onClick={() => setLocation("New York")}>
-                New York
+              <DropdownMenuItem onClick={() => setLocation("Remote")}>
+                Remote
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setLocation("California")}>
-                California
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setLocation("Chicago")}>
-                Chicago
+              <DropdownMenuItem onClick={() => setLocation("On-site")}>
+                On-site
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <div>
             <span>Select Type</span>
             <RadioGroup
-              defaultValue="comfortable"
+              value={jobType}
+              onValueChange={(value: string) =>
+                setJobType(value as "Full-Time" | "Part-Time" | "Contract")
+              }
               className="flex gap-4 pt-2 text-[#A2A1A8]"
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem
-                  value="default"
-                  id="r1"
-                  className="border-[#A2A1A8]"
-                />
-                <Label htmlFor="r1">Default</Label>
+                <RadioGroupItem value="Full-Time" id="full-time" />
+                <Label htmlFor="full-time">Full-Time</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="comfortable" id="r2" />
-                <Label htmlFor="r2">Comfortable</Label>
+                <RadioGroupItem value="Part-Time" id="part-time" />
+                <Label htmlFor="part-time">Part-Time</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="Contract" id="contract" />
+                <Label htmlFor="contract">Contract</Label>
               </div>
             </RadioGroup>
           </div>
+          {error && <p className="text-red-500">{error}</p>}
         </div>
         <div className="flex justify-between gap-2">
-          <Button variant={"outline"} className="w-full">
+          <Button variant="outline" className="w-full" onClick={handleCancel}>
             Cancel
           </Button>
           <Button
-            variant={"outline"}
+            onClick={handleSubmit}
+            disabled={loading}
             className="w-full bg-[#7152F3] text-white"
           >
-            Add
+            {loading ? "Adding..." : "Add"}
           </Button>
         </div>
       </DialogContent>

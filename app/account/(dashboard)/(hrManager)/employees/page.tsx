@@ -9,13 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  FiEye,
-  FiEdit,
-  FiTrash2,
-  FiPlusCircle,
-  FiSearch,
-} from "react-icons/fi";
+import { FiTrash2, FiPlusCircle, FiSearch } from "react-icons/fi";
 import React, { useEffect, useState } from "react";
 import { MdTune } from "react-icons/md";
 import {
@@ -40,10 +34,19 @@ type Employee = {
 };
 
 const Employees = () => {
-  const { addEmployee, getEmployeesByCompanyId, removeEmployee, employees = [], pagination, loading } =
-    useEmployee();
-  const {fetchCompanyIdByUserId} = useCompany();
-  const { fetchDepartments } = useDepartment();const [departments, setDepartments] = useState<{ id: number; name: string; people?: string[] }[]>([]);
+  const {
+    addEmployee,
+    getEmployeesByCompanyId,
+    removeEmployee,
+    employees = [],
+    pagination,
+    loading,
+  } = useEmployee();
+  const { fetchCompanyIdByUserId } = useCompany();
+  const { fetchDepartments } = useDepartment();
+  const [departments, setDepartments] = useState<
+    { id: number; name: string; people?: string[] }[]
+  >([]);
 
   const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,9 +54,15 @@ const Employees = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const userId = localStorage.getItem("userId");
-  const [filters, setFilters] = useState({ department: "", type: "", designation: "" });
+  const [filters, setFilters] = useState({
+    department: "",
+    type: "",
+    designation: "",
+  });
 
-  const handleFilterChange = (e: any) => {
+  const handleFilterChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
   };
 
@@ -61,13 +70,16 @@ const Employees = () => {
     return (
       (!filters.department || emp.department === filters.department) &&
       (!filters.type || emp.type === filters.type) &&
-      (!filters.designation || emp.designation.toLowerCase().includes(filters.designation.toLowerCase()))
+      (!filters.designation ||
+        emp.designation
+          .toLowerCase()
+          .includes(filters.designation.toLowerCase()))
     );
   });
 
   useEffect(() => {
     const fetchCompany = async () => {
-      if(userId) {
+      if (userId) {
         const id = await fetchCompanyIdByUserId(userId);
         setCompanyId(id);
       }
@@ -81,7 +93,11 @@ const Employees = () => {
       if (!companyId) return;
       try {
         const fetchedDepartments = await fetchDepartments(companyId);
-        setDepartments(fetchedDepartments || []);
+        const departmentsWithId = fetchedDepartments.map((dept, index) => ({
+          id: index,
+          name: dept.name,
+        }));
+        setDepartments(departmentsWithId || []);
       } catch (error) {
         console.error("Error fetching departments:", error);
       }
@@ -89,7 +105,7 @@ const Employees = () => {
 
     getDepartments();
   }, [companyId]);
-  
+
   useEffect(() => {
     if (companyId) {
       getEmployeesByCompanyId(companyId, currentPage, itemsPerPage);
@@ -144,9 +160,8 @@ const Employees = () => {
 
   const handleAddEmployee = async () => {
     try {
-      if(companyId){
-        
-      await addEmployee({...newEmployee, companyId: companyId});
+      if (companyId) {
+        await addEmployee({ ...newEmployee, companyId: companyId });
       }
       closeDialog();
     } catch (error) {
@@ -199,7 +214,11 @@ const Employees = () => {
             <FiPlusCircle />
             Add New Employee
           </Button>
-          <Button variant="outline" className="bg-transparent" onClick={openFilter}>
+          <Button
+            variant="outline"
+            className="bg-transparent"
+            onClick={openFilter}
+          >
             <MdTune />
             Filter
           </Button>
@@ -211,9 +230,7 @@ const Employees = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="font-semibold text-left">
-                Sl No.
-              </TableHead>
+              <TableHead className="font-semibold text-left">Sl No.</TableHead>
               <TableHead className="font-semibold text-left">
                 Employee Name
               </TableHead>
@@ -229,50 +246,51 @@ const Employees = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-          {loading ? (
-            <TableRow>
-              <TableCell colSpan={7} className="text-center">
-                Loading employees...
-              </TableCell>
-            </TableRow>
-          ) : Array.isArray(filteredEmployees) && filteredEmployees.length > 0 ? (
-            filteredEmployees.map((employee, index) => (
-              <TableRow key={employee._id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{employee.name}</TableCell>
-                <TableCell>{employee.department}</TableCell>
-                <TableCell>{employee.designation}</TableCell>
-                <TableCell>{employee.type}</TableCell>
-                <TableCell>
-                  <span
-                    className={`py-1 px-2 rounded-full text-xs ${
-                      employee.status === "Active"
-                        ? "bg-[#3FC28A16] text-[#3FC28A]"
-                        : "bg-[#F45B6916] text-[#F45B69]"
-                    }`}
-                  >
-                    {employee.status}
-                  </span>
-                </TableCell>
-                <TableCell className="flex gap-2">
-                  <Button
-                    onClick={() => deleteEmployee(employee._id)}
-                    variant="ghost"
-                    size="sm"
-                    className="text-[#F45B69]"
-                  >
-                    <FiTrash2 />
-                  </Button>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center">
+                  Loading employees...
                 </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={7} className="text-center">
-                No employees found.
-              </TableCell>
-            </TableRow>
-          )}
+            ) : Array.isArray(filteredEmployees) &&
+              filteredEmployees.length > 0 ? (
+              filteredEmployees.map((employee, index) => (
+                <TableRow key={employee._id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{employee.name}</TableCell>
+                  <TableCell>{employee.department}</TableCell>
+                  <TableCell>{employee.designation}</TableCell>
+                  <TableCell>{employee.type}</TableCell>
+                  <TableCell>
+                    <span
+                      className={`py-1 px-2 rounded-full text-xs ${
+                        employee.status === "Active"
+                          ? "bg-[#3FC28A16] text-[#3FC28A]"
+                          : "bg-[#F45B6916] text-[#F45B69]"
+                      }`}
+                    >
+                      {employee.status}
+                    </span>
+                  </TableCell>
+                  <TableCell className="flex gap-2">
+                    <Button
+                      onClick={() => deleteEmployee(employee._id)}
+                      variant="ghost"
+                      size="sm"
+                      className="text-[#F45B69]"
+                    >
+                      <FiTrash2 />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center">
+                  No employees found.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
@@ -385,13 +403,13 @@ const Employees = () => {
             <DialogTitle>Filter Employee</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-          <Input
+            <Input
               name="department"
               value={filters.department}
               onChange={handleFilterChange}
               placeholder="Department"
             />
-          <Input
+            <Input
               name="designation"
               value={filters.designation}
               onChange={handleFilterChange}
@@ -402,7 +420,7 @@ const Employees = () => {
               value={filters.type}
               onChange={handleFilterChange}
               placeholder="Type"
-            />            
+            />
           </div>
           <div className="flex justify-end gap-2 mt-4">
             <Button onClick={closeFilter}>Cancel</Button>

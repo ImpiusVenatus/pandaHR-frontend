@@ -1,47 +1,42 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import JobCard from "@/components/dashboard/JobCard";
 import JobDialog from "@/components/dashboard/JobDialog";
 import { Button } from "@/components/ui/button";
+import useCompany from "@/lib/hooks/company/useCompany";
+import useJob from "@/lib/hooks/company/useJob";
 
 const Jobs = () => {
-  const activeJobs = [
-    {
-      title: "UI/UX Designer",
-      category: "Design",
-      types: ["Design", "Full Time", "Remote"],
-      location: "California, USA",
-      salary: "3600$/Month",
-    },
-    {
-      title: "Frontend Developer",
-      category: "Engineering",
-      types: ["Engineering", "Part Time", "Remote"],
-      location: "New York, USA",
-      salary: "4000$/Month",
-    },
-  ];
+  const [userId, setUserId] = useState<string | null>(null);
+  const [companyId, setCompanyId] = useState<string | null>(null);
+  const { fetchCompanyIdByUserId } = useCompany();
+  const { jobs, getAllJobs, loading } = useJob();
 
-  const inactiveJobs = [
-    {
-      title: "Content Writer",
-      category: "Writing",
-      types: ["Writing", "Contract", "On-site"],
-      location: "Chicago, USA",
-      salary: "2500$/Month",
-    },
-  ];
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId"));
+  }, []);
 
-  const completedJobs = [
-    {
-      title: "Backend Developer",
-      category: "Engineering",
-      types: ["Engineering", "Full Time", "Remote"],
-      location: "Los Angeles, USA",
-      salary: "5000$/Month",
-    },
-  ];
+  useEffect(() => {
+    const fetchCompany = async () => {
+      if (userId) {
+        const id = await fetchCompanyIdByUserId(userId);
+        setCompanyId(id);
+      }
+    };
+    fetchCompany();
+  }, [userId]);
+
+  useEffect(() => {
+    if (companyId) {
+      getAllJobs(companyId);
+    }
+  }, [companyId]);
+
+  // Categorize jobs based on status
+  const activeJobs = jobs.filter((job) => job.status === "Active");
+  const inactiveJobs = jobs.filter((job) => job.status === "Inactive");
+  const completedJobs = jobs.filter((job) => job.status === "Completed");
 
   return (
     <div className="container mx-auto p-4 border border-[#A2A1A816] rounded-md font-dmSans">
@@ -57,31 +52,41 @@ const Jobs = () => {
       </div>
 
       {/* Board Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Active Jobs */}
-        <div className="border border-[#A2A1A816] rounded-md p-4 bg-[#F9FAFB] dark:bg-transparent">
-          <h2 className="text-lg font-semibold mb-3">Active Jobs</h2>
-          {activeJobs.map((job, index) => (
-            <JobCard key={index} {...job} />
-          ))}
-        </div>
+      {loading ? (
+        <p className="text-center text-gray-500">Loading jobs...</p>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Active Jobs */}
+          <div className="border border-[#A2A1A816] rounded-md p-4 bg-[#F9FAFB] dark:bg-transparent">
+            <h2 className="text-lg font-semibold mb-3">Active Jobs</h2>
+            {activeJobs.length > 0 ? (
+              activeJobs.map((job) => <JobCard key={job._id} job={job} />)
+            ) : (
+              <p className="text-gray-500">No active jobs available.</p>
+            )}
+          </div>
 
-        {/* Inactive Jobs */}
-        <div className="border border-[#A2A1A816] rounded-md p-4 bg-[#F9FAFB] dark:bg-transparent">
-          <h2 className="text-lg font-semibold mb-3">Inactive Jobs</h2>
-          {inactiveJobs.map((job, index) => (
-            <JobCard key={index} {...job} />
-          ))}
-        </div>
+          {/* Inactive Jobs */}
+          <div className="border border-[#A2A1A816] rounded-md p-4 bg-[#F9FAFB] dark:bg-transparent">
+            <h2 className="text-lg font-semibold mb-3">Inactive Jobs</h2>
+            {inactiveJobs.length > 0 ? (
+              inactiveJobs.map((job) => <JobCard key={job._id} job={job} />)
+            ) : (
+              <p className="text-gray-500">No inactive jobs available.</p>
+            )}
+          </div>
 
-        {/* Completed Jobs */}
-        <div className="border border-[#A2A1A816] rounded-md p-4 bg-[#F9FAFB] dark:bg-transparent">
-          <h2 className="text-lg font-semibold mb-3">Completed Jobs</h2>
-          {completedJobs.map((job, index) => (
-            <JobCard key={index} {...job} />
-          ))}
+          {/* Completed Jobs */}
+          <div className="border border-[#A2A1A816] rounded-md p-4 bg-[#F9FAFB] dark:bg-transparent">
+            <h2 className="text-lg font-semibold mb-3">Completed Jobs</h2>
+            {completedJobs.length > 0 ? (
+              completedJobs.map((job) => <JobCard key={job._id} job={job} />)
+            ) : (
+              <p className="text-gray-500">No completed jobs available.</p>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
